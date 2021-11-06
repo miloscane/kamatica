@@ -1,0 +1,21 @@
+<%- include ("partials/header") -%>
+	<div class="subTitle">login</div>
+	<div class="formWrapper">
+		<form method="POST" action="/login" id="login">
+			<div class="inputWrap">
+				<input type="text" name="username" placeholder="Ime" id="username">
+			</div>
+			<div class="inputWrap">
+				<input type="password" name="pin" placeholder="PIN" id="pin" oninput="pinInput()">
+			</div>
+		</form>
+		<script>
+			function pinInput(){
+				var pin	=	document.getElementById("pin").value;
+				if(pin.length==4){
+					document.getElementById("login").submit();
+				}
+			}
+		</script>
+	</div>
+<%- include ("partials/footer") -%>

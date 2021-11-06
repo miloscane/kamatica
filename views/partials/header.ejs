@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+	<html lang="en-US">
+		<head>
+			<meta charset="utf-8">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<title>Kamatica</title>
+			<link href="/css/style.css?ver=<%=pageInfo.fileVersion%>" rel="stylesheet">
+			<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+		</head>
+		<body>
+			<script>
+				var user	= 	false;
+				var today	=	new Date();
+				var day 	=	(Number(today.getDate())<10) ? "0"+today.getDate() : today.getDate();
+				var month 	=	(Number(today.getMonth()+1)<10) ? "0"+eval(today.getMonth()+1) : today.getMonth();
+				var year 	=	today.getFullYear();
+				var todayString	=	day+"-"+month+"-"+year;
+				<% if (typeof user!="undefined") { %>
+					var user	=	<%- JSON.stringify(user) %>;
+					var kursnaLista = false;
+					try{
+						kursnaLista =	JSON.parse(user.kursnaLista);
+						kursnaLista	=	JSON.parse(JSON.stringify(kursnaLista.result));
+						var valute	=	["eur","usd"];
+						var kursevi	=	Object.keys(kursnaLista);
+						for(var i=0;i<kursevi.length;i++){
+							if(valute.indexOf(kursevi[i])<0){
+								delete kursnaLista[kursevi[i]]
+							}
+						}
+						console.log(kursnaLista["eur"]["sre"]);
+					}catch(err){
+						console.log(err);
+					}
+				<% } %>
+			</script>
+			<div class="mainLogo">
+				<a href="https://solver.rs">
+					<img width="100" src="/logos/solver-white-website-logo.svg">
+				</a>
+			</div>
+			<div id="today"></div>
+			<script>
+				document.getElementById("today").innerHTML = todayString;
+			</script>
+			<div id="container">
+				<div class="title">POZAJMICA</div>

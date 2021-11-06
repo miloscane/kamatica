@@ -1,0 +1,354 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	border: 0;
+	font-family: inherit;
+	font-size: 100%;
+	font-style: inherit;
+	font-weight: inherit;
+	margin: 0;
+	outline: 0;
+	padding: 0;
+	vertical-align: baseline;
+}
+
+html {
+	font-size: 62.5%; /* Corrects text resizing oddly in IE6/7 when body font-size is set using em units http://clagnut.com/blog/348/#c790 */
+	overflow-y: scroll; /* Keeps page centered in all browsers regardless of content height */
+	-webkit-text-size-adjust: 100%; /* Prevents iOS text size adjust after orientation change, without disabling user zoom */
+	-ms-text-size-adjust:     100%; /* www.456bereastreet.com/archive/201012/controlling_text_size_in_safari_for_ios_without_disabling_user_zoom/ */
+}
+
+*,
+*:before,
+*:after { /* apply a natural box layout model to all elements; see http://www.paulirish.com/2012/box-sizing-border-box-ftw/ */
+	-webkit-box-sizing: border-box; /* Not needed for modern webkit but still used by Blackberry Browser 7.0; see http://caniuse.com/#search=box-sizing */
+	-moz-box-sizing:    border-box; /* Still needed for Firefox 28; see http://caniuse.com/#search=box-sizing */
+	box-sizing:         border-box;
+}
+
+body {
+	background: rgb(19,170,82);
+	background: linear-gradient(0deg, rgba(19,170,82,1) 0%, rgba(17,97,73,1) 100%);
+	color: rgb(255,255,255);
+	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+	font-family: 'Montserrat', sans-serif;
+	line-height: 1.5;
+	font-weight: 300;
+	font-size: 16px;
+	overflow: auto;
+}
+
+table { 
+	border-collapse: separate;
+	border-spacing: 0;
+	width: 100%;
+	table-layout:fixed;
+}
+
+a{
+	text-deocration: none;
+	color: inherit;
+}
+
+a img {
+	border: 0;
+}
+
+sup,
+sub {
+	font-size: 75%;
+	height: 0;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
+}
+
+sub {
+	bottom: -0.25em;
+}
+
+sup {
+	top: -0.5em;
+}
+
+b {
+	font-weight:600;
+}
+
+img {
+	height: auto;
+	max-width: 100%;
+	vertical-align: middle;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.mainLogo{
+	padding: 5px;
+}
+
+#today{
+	padding: 5px;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+#container{
+	padding: 20px 3.5%;
+	width: 100%;
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+.title{
+	font-size: 24px;
+	font-weight: 600;
+	text-align: center;
+}
+
+.subTitle{
+	font-size: 18px;
+	font-weight: 400;
+	text-align: center;
+	font-style: italic;
+}
+
+.inlineLink{
+	font-weight: 600;
+	color: rgb(238,255,0);
+	text-decoration: underline;
+}
+
+
+.formWrapper{
+	margin: 0 auto;
+	margin-top: 20px;
+}
+
+.formWrapper .inputWrap{
+	margin-bottom: 20px;
+}
+
+.formWrapper input{
+	width: 100%;
+	padding: 10px;
+	font-size: 20px;
+	font-weight: 300;
+	background-color: rgba(0,0,0,0.3);
+	border: 1px solid rgb(255,255,255);
+	color: rgb(255,255,255);
+	border-radius: 3px;
+	text-align: center;
+}
+
+.formWrapper input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgba(255,255,255,0.5);
+	font-weight: 200;
+  opacity: 1; /* Firefox */
+}
+
+.formWrapper input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: rgba(255,255,255,0.5);
+	font-weight: 200;
+}
+
+.formWrapper input::-ms-input-placeholder { /* Microsoft Edge */
+  color: rgba(255,255,255,0.5);
+	font-weight: 200;
+}
+
+.tabsWrap{
+	position: relative;
+}
+
+.tabsWrap .arrowLeft{
+	width: 20px;
+	position: absolute;
+	left: 0;
+	top: 100px;
+	cursor: pointer;
+}
+
+.tabsWrap .arrowRight{
+	width: 20px;
+	position: absolute;
+	right: 0;
+	top: 100px;
+	cursor: pointer;
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+.tabsWrap .tab{
+	width: calc( 100% - 50px);
+	position: absolute;
+	top: 0;
+	left: 25px;
+	-webkit-transition: all ease 0.2s;
+	-moz-transition: all ease 0.2s;
+	-ms-transition: all ease 0.2s;
+	-o-transition: all ease 0.2s;
+	transition: all ease 0.2s;
+}
+
+.tabsWrap .tab .tabTitle{
+	text-align: center;
+	font-size: 20px;
+	font-style: italic;
+	margin-bottom: 20px;
+}
+
+.tabsWrap .right{
+	left: 150% ;
+}
+.tabsWrap .left{
+	left:  -150% ;
+}
+
+.tabsWrap .hidden{
+	opacity: 0;
+}
+
+#kurs .inputWrap{
+	margin-bottom: 20px;
+}
+
+#kurs .inputWrap .note, #kurs .inputWrap .input{
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 18px;
+}
+
+#kurs .inputWrap .note{
+	width: 50px;
+	text-align: left;
+}
+
+#kurs .inputWrap .input{
+	width: calc( 100% - 70px );
+}
+
+#kurs .inputWrap input{
+	width: 100%;
+	padding: 10px;
+	font-weight: 600;
+	font-size: 18px;
+	background-color: rgba(0,0,0,0.3);
+	border: 1px solid rgb(255,255,255);
+	color: rgb(255,255,255);
+	border-radius: 3px;
+	text-align: center;
+}
+
+.dugForm .inputWrap{
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.dugForm  .inputWrap input{
+	width: 100%;
+	padding: 10px;
+	font-weight: 600;
+	font-size: 18px;
+	background-color: rgba(0,0,0,0.3);
+	border: 1px solid rgb(255,255,255);
+	color: rgb(255,255,255);
+	border-radius: 3px;
+	text-align: center;
+}
+
+.dugForm  .inputWrap textarea{
+	width: 100%;
+	padding: 10px;
+	font-weight: 200;
+	font-size: 14px;
+	background-color: rgba(0,0,0,0.3);
+	border: 1px solid rgb(255,255,255);
+	color: rgb(255,255,255);
+	border-radius: 3px;
+	text-align: left;
+	height: 100px;
+}
+
+.dugForm input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgba(255,255,255,0.5);
+	font-weight: 200;
+  opacity: 1; /* Firefox */
+}
+
+.dugForm input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: rgba(255,255,255,0.5);
+	font-weight: 200;
+}
+
+.dugForm input::-ms-input-placeholder { /* Microsoft Edge */
+  color: rgba(255,255,255,0.5);
+	font-weight: 200;
+}
+
+.dugForm .inputWrap .inlineHalf{
+	width: 45%;
+	display: inline-block;
+	margin: 0 2%;
+}
+
+.formTitle{
+	text-align: center;
+	font-size: 18px;
+	font-weight: 500;
+}
+
+.formNote{
+	font-size: 16px;
+	font-weight: 200;
+}
+
+
+.button{
+	font-size: 20px;
+	font-weight: 600;
+	color: rgba(17,97,73,1);
+	background: rgb(255,255,255);
+	background: linear-gradient(0deg, rgba(165,165,165,1) 0%, rgba(255,255,255,1) 100%);
+	padding: 10px;
+}
+
+.errorMessage{
+	background-color: rgb(230,0,0);
+	color: rgb(255,255,255);
+	font-size: 12px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

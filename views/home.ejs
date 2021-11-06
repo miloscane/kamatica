@@ -1,0 +1,222 @@
+<%- include ("partials/header") -%>
+	
+	<div class="tabsWrap" id="tabs">
+		<div class="arrowLeft hidden" onclick="navigate(this,-1)">
+			<img src="/icons/nav-arrow.svg">
+		</div>
+		<div class="arrowRight" onclick="navigate(this,1)">
+			<img src="/icons/nav-arrow.svg">
+		</div>
+		<div class="tab">
+			<div class="tabTitle">Nov dug</div>
+			<div class="dugForm">
+				<form method="POST" action="/novi-dug" id="novi-dug">
+					<div class="inputWrap">
+						<div class="formTitle">Ime</div>
+						<input type="text" name="ime" data-required="1">
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Telefon</div>
+						<input type="number" name="phone">
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Datum</div>
+						<input type="date" name="datum" placeholder="Ime" id="new-date" disabled>
+						<script>
+							document.getElementById("new-date").value=year+"-"+month+"-"+day;
+						</script>
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Iznos</div>
+						<div class="inlineHalf">
+							<input type="number" name="eur" id="eur-input" oninput="eurInput()" data-required="1">
+							<div class="formNote">EUR</div>
+						</div>
+						<div class="inlineHalf">
+							<input type="number" name="rsd" id="rsd-input" oninput="rsdInput()">
+							<div class="formNote">RSD</div>
+						</div>
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Procenat</div>
+						<input type="number" name="ime" id="procenat" oninput="procenatInput()" data-required="1">
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Kamata</div>
+						<div class="inlineHalf">
+							<input type="number" id="eur-calc" disabled>
+							<div class="formNote">EUR</div>
+						</div>
+						<div class="inlineHalf">
+							<input type="number" id="rsd-calc" disabled>
+							<div class="formNote">RSD</div>
+						</div>
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Komentar</div>
+						<textarea name="komenatar"></textarea>
+					</div>
+					<div class="errorMessage" id="new-error"></div>
+					<div class="inputWrap">
+						<div class="button" onclick="shouldSubmitNewUser()">Sačuvaj</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="tab">
+			<div class="tabTitle">Danas</div>
+		</div>
+		<div class="tab">
+			<div class="tabTitle">Kalendar</div>
+		</div>
+		<div class="tab">
+			<div class="tabTitle">Dugovi</div>
+		</div>
+		<div class="tab">
+			<div class="tabTitle">Kursna Lista</div>
+			<div id="kurs">
+				<div class="inputWrap">
+					<div class="note">RSD:</div><!--
+					--><div class="input">
+						<input type="number" class="valuta" data-valuta="rsd" oninput="valutaInput(this)">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		var tabs = document.getElementById("tabs").getElementsByClassName("tab");
+		for(var i=0;i<tabs.length;i++){
+			if(i==0){
+				tabs[i].dataset.active=1;
+			}else{
+				tabs[i].dataset.active=0;
+				tabs[i].classList.add("right");
+			}
+		}
+
+		function navigate(elem,direction){
+			if(!elem.classList.contains("hidden")){
+				var activeIndex = -1;
+				for(var i=0;i<tabs.length;i++){
+					if(Number(tabs[i].dataset.active)==1){
+						activeIndex = i;
+					}
+				}
+
+				if(activeIndex==tabs.length-2 && direction==1){
+					document.getElementById("tabs").getElementsByClassName("arrowRight")[0].classList.add("hidden");
+				}else if(activeIndex==1 && direction==-1){
+					document.getElementById("tabs").getElementsByClassName("arrowLeft")[0].classList.add("hidden");
+				}else{
+					document.getElementById("tabs").getElementsByClassName("arrowLeft")[0].classList.remove("hidden");
+					document.getElementById("tabs").getElementsByClassName("arrowRight")[0].classList.remove("hidden");
+				}
+
+				var nextElem = activeIndex+direction;
+				for(var i=0;i<tabs.length;i++){
+					if(i==nextElem){
+						tabs[i].dataset.active=1;
+						tabs[i].classList.remove("left");
+						tabs[i].classList.remove("right");
+					}else if(i<nextElem){
+						tabs[i].dataset.active=0;
+						tabs[i].classList.add("left");
+					}else if(i>nextElem){
+						tabs[i].dataset.active=0;
+						tabs[i].classList.add("right");
+					}
+				}
+			}
+		}
+
+		//Valute inicijalizacija
+		var wrap	=	document.getElementById("kurs");
+		for(var i=0;i<valute.length;i++){
+			var inputWrap	=	document.createElement("DIV");
+			inputWrap.setAttribute("class","inputWrap");
+
+				var note	=	document.createElement("DIV");
+				note.setAttribute("class","note");
+				note.innerHTML	=	valute[i].toUpperCase()+":";
+				inputWrap.appendChild(note);
+
+				var input	=	document.createElement("DIV");
+				input.setAttribute("class","input");
+
+					var inputField	=	document.createElement("INPUT");
+					inputField.setAttribute("class","valuta");
+					inputField.setAttribute("type","number");
+					inputField.setAttribute("data-valuta",valute[i]);
+					inputField.setAttribute("oninput","valutaInput(this)");
+					input.appendChild(inputField)
+
+				inputWrap.appendChild(input);
+
+			wrap.appendChild(inputWrap);
+		}
+
+		function valutaInput(elem){
+			var valuta		=	elem.dataset.valuta;
+			var vrednost	=	Number(elem.value);
+			var inputs		=	document.getElementById("kurs").getElementsByClassName("valuta");
+			console.log(inputs.length)
+			if(valuta=="rsd"){
+				for(var i=0;i<inputs.length;i++){
+					var current	=	inputs[i].dataset.valuta;
+					if(current!="rsd"){
+						inputs[i].value	=	eval(vrednost/Number(kursnaLista[current]["sre"])).toFixed(2);
+					}
+				}
+			}else{
+				inputs[0].value	=	eval(vrednost*Number(kursnaLista[valuta]["sre"])).toFixed(0);
+				for(var i=0;i<inputs.length;i++){
+					var current	=	inputs[i].dataset.valuta;
+					if(current!="rsd" && current!=valuta){
+						inputs[i].value	=	eval(inputs[0].value/Number(kursnaLista[current]["sre"])).toFixed(2);
+					}
+				}
+			}
+		}
+
+		function eurInput(){
+			var iznos	=	Number(document.getElementById("eur-input").value);
+			document.getElementById("rsd-input").value	=	eval(iznos*Number(kursnaLista["eur"]["sre"])).toFixed(0);
+			procenatInput()
+		}
+
+		function rsdInput(){
+			var iznos	=	Number(document.getElementById("rsd-input").value);
+			document.getElementById("eur-input").value	=	eval(iznos/Number(kursnaLista["eur"]["sre"])).toFixed(2);
+			procenatInput()
+		}
+
+		function procenatInput(){
+			var procenat	=	Number(document.getElementById("procenat").value);
+			var iznos		=	Number(document.getElementById("eur-input").value);
+			if(procenat>0 && iznos>0){
+				document.getElementById("eur-calc").value	=	eval(iznos*procenat/100).toFixed(2);
+				document.getElementById("rsd-calc").value	=	eval(iznos*procenat/100*Number(kursnaLista["eur"]["sre"])).toFixed(0);
+
+			}
+		}
+
+		function shouldSubmitNewUser(){
+			var inputs	=	document.getElementById("novi-dug").getElementsByTagName("INPUT");
+			var submit 	=	true;
+			for(var i=0;i<inputs.length;i++){
+				if(Number(inputs[i].dataset.required)==1 && !inputs[i].value){
+					submit	=	false;
+				}
+			}
+
+			if(submit){
+				document.getElementById("new-error").innerHTML	=	"";
+				document.getElementById("novi-dug").submit();
+			}else{
+				document.getElementById("new-error").innerHTML	=	"Nisu popunjena sva bitna polja";
+			}
+		}
+
+	</script>
+<%- include ("partials/footer") -%>
