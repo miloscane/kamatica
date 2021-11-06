@@ -56,10 +56,27 @@ require('events').EventEmitter.prototype._maxListeners = 0;
 
 server.get('/',function(req,res){
 	if(req.session.user){
-		res.render('home',{
-			pageInfo: pageInfo,
-			user: 		req.session.user 
-		});	
+		mongoClient.connect(mongoUrl,{useUnifiedTopology: true},function(err,client){
+			if(err){
+				console.log(err);
+				res.send(err);
+			}else{
+				var collection	=	client.db('Kamatica').collection('Duznici');
+				collection.find({me:req.session.user.username}).toArray(function(err,result){
+					if(err){
+						console.log(err);
+						res.send(err);
+					}else{
+						res.render('home',{
+							pageInfo: pageInfo,
+							user: 		req.session.user,
+							dugovi: 	result 
+						});	
+					}
+				});
+			}
+		});
+		
 	}else{
 		res.redirect('/login');
 	}
@@ -90,12 +107,14 @@ server.post('/login',function(req,res){
 	var pin  			=	req.body.pin.toString();
 	mongoClient.connect(mongoUrl,{useUnifiedTopology: true},function(err,client){
 		if(err){
-			console.log(err)
+			console.log(err);
+			res.send(err);
 		}else{
 			var collection	=	client.db('Kamatica').collection('Korisnici');
 			collection.find({username:username}).toArray(function(err,result){
 				if(err){
-					console.log(err)
+					console.log(err);
+					res.send(err);
 				}else{
 					if(result.length>0){
 						if(pin.toString()==result[0].pin.toString()){
@@ -113,10 +132,12 @@ server.post('/login',function(req,res){
 							            sessionObject.kursnaLista = JSON.stringify(json);
 							            req.session.user	=	sessionObject;
 													res.redirect('/');
+													client.close();
 							        } catch (error) {
 							            console.error(error.message);
 							            req.session.user	=	sessionObject;
 													res.redirect('/');
+													client.close();
 							        };
 							    });
 
@@ -124,6 +145,7 @@ server.post('/login',function(req,res){
 							    console.error(error.message);
 							    req.session.user	=	sessionObject;
 									res.redirect('/');
+									client.close();
 							});
 							
 							
@@ -133,9 +155,43 @@ server.post('/login',function(req,res){
 					}else{
 						res.redirect('/failed-login');
 					}
-					client.close();
 				}
 			});
 		}
 	});
 });
+
+server.post('/novi-dug',function(req,res){
+	if(req.session.user){
+			var dugJson				=	{};
+			dugJson.id 				=	generateId(100);
+			dugJson.me 				=	req.session.user.username;
+			dugJson.ime 			=	req.body.ime;
+			dugJson.telefon		=	req.body.telefon ? req.body.telefon : "";
+			dugJson.datum 		=	req.body.datum;
+			dugJson.iznos 		=	req.body.eur;
+			dugJson.procenat	=	req.body.procenat;
+			dugJson.komentar	=	req.body.komentar;
+			dugJson.status		=	"Aktivan";
+			mongoClient.connect(mongoUrl,{useUnifiedTopology: true},function(err,client){
+				if(err){
+					console.log(err)
+				}else{
+					var duznici	=	client.db('Kamatica').collection('Duznici');
+					duznici.insertOne(dugJson,function(err,addedResult){
+						if(err){
+							console.log(err);
+							res.send(err);
+						}else{
+							res.redirect('/');
+						}
+						client.close();
+					});
+				}
+			});
+	}else{
+		res.redirect("/login");
+	}
+
+});
+

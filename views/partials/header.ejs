@@ -7,13 +7,14 @@
 			<title>Kamatica</title>
 			<link href="/css/style.css?ver=<%=pageInfo.fileVersion%>" rel="stylesheet">
 			<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+			<script src="/js/helpers.js?ver=<%=pageInfo.fileVersion%>"></script>
 		</head>
 		<body>
 			<script>
 				var user	= 	false;
 				var today	=	new Date();
 				var day 	=	(Number(today.getDate())<10) ? "0"+today.getDate() : today.getDate();
-				var month 	=	(Number(today.getMonth()+1)<10) ? "0"+eval(today.getMonth()+1) : today.getMonth();
+				var month 	=	(Number(today.getMonth()+1)<10) ? "0"+eval(today.getMonth()+1) : today.getMonth()+1;
 				var year 	=	today.getFullYear();
 				var todayString	=	day+"-"+month+"-"+year;
 				<% if (typeof user!="undefined") { %>
@@ -29,7 +30,6 @@
 								delete kursnaLista[kursevi[i]]
 							}
 						}
-						console.log(kursnaLista["eur"]["sre"]);
 					}catch(err){
 						console.log(err);
 					}

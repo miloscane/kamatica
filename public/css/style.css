@@ -217,10 +217,10 @@ input::-webkit-inner-spin-button {
 }
 
 .tabsWrap .right{
-	left: 150% ;
+	left: 300% ;
 }
 .tabsWrap .left{
-	left:  -150% ;
+	left:  -300% ;
 }
 
 .tabsWrap .hidden{
@@ -338,8 +338,96 @@ input::-webkit-inner-spin-button {
 }
 
 
+#load-box{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1000;
+	background-color: rgba(0,0,0,0.5);
+	display: none;
+}
+
+#load-box .loadGif{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 50px;
+	-webkit-transform: translate(-50%,-50%);
+	-moz-transform: translate(-50%,-50%);
+	-ms-transform: translate(-50%,-50%);
+	-o-transform: translate(-50%,-50%);
+	transform: translate(-50%,-50%);
+}
+
+#duznici-lista .wrap{
+	padding: 3px 0;
+	border-bottom: 1px solid rgb(255,255,255);
+}
 
 
+#duznici-lista .wrap:nth-child(even){
+	background-color: rgba(255,255,255,0.2);
+}
+
+#duznici-lista .inlineItem{
+	display: inline-block;
+	vertical-align: top;
+	text-align: left;
+	padding-left: 5px;
+	font-size: 16px;
+	font-weight: 200;
+}
+
+#duznici-lista .ime{
+	width: 30%;
+	padding-left: 0;
+}
+
+#duznici-lista .iznos{
+	width: 30%;
+}
+
+#duznici-lista .datum{
+	width: 30%;
+}
+
+#duznici-lista .expand{
+	width: 5%;
+	text-align: center;
+}
+
+#duznici-lista .extraInfo{
+	display: none;
+}
+
+.rotate180{
+	transform-origin: center center;
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+#duznici-lista .button{
+	text-align: center;
+	display: inline-block;
+	margin: 5px;
+	font-size: 14px;
+	padding: 2px 4px;
+}
+
+#duznici-lista .extraInfo .komentar{
+	font-size: 12px;
+	padding: 4px;
+}
+
+#duznici-lista .extraInfo .note{
+	font-size: 12px;
+	padding: 4px;
+}
 
 
 

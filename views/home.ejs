@@ -8,6 +8,103 @@
 			<img src="/icons/nav-arrow.svg">
 		</div>
 		<div class="tab">
+			<div class="tabTitle">Dugovi</div>
+			<div id="izmena-duga"></div>
+			<div id="duznici-lista"></div>
+			<script>
+				var dugovi	=	<%- JSON.stringify(dugovi) %>;
+				console.log(dugovi);
+				for(var i=0;i<dugovi.length;i++){
+					var dug 	=	JSON.parse(JSON.stringify(dugovi[i]));
+					var wrap	=	document.createElement("DIV");
+					wrap.setAttribute("class","wrap");
+
+						var basicInfo	=	document.createElement("DIV");
+						basicInfo.setAttribute("class","basicInfo");
+						basicInfo.setAttribute("onclick","dropdown(this)");
+						basicInfo.setAttribute("data-opened","0");
+
+							var ime =	document.createElement("DIV");
+							ime.setAttribute("class","inlineItem ime");
+							ime.innerHTML	=	dug.ime;
+							basicInfo.appendChild(ime);
+
+							var iznos =	document.createElement("DIV");
+							iznos.setAttribute("class","inlineItem iznos");
+							iznos.innerHTML	=	eval(Number(dug.iznos)*Number(dug.procenat)/100)+" EUR";
+							basicInfo.appendChild(iznos);
+
+							var datum =	document.createElement("DIV");
+							datum.setAttribute("class","inlineItem datum");
+							datum.innerHTML	=	dateInversion(dug.datum);
+							basicInfo.appendChild(datum);
+
+							var expand =	document.createElement("DIV");
+							expand.setAttribute("class","inlineItem expand");
+							expand.innerHTML	=	"<img width=\"20\" src=\"/icons/nav-arrow-down.svg\">";
+							basicInfo.appendChild(expand);
+
+						wrap.appendChild(basicInfo);
+
+						var extraInfo	=	document.createElement("DIV");
+						extraInfo.setAttribute("class","extraInfo");
+
+							var ukupno	=	document.createElement("DIV");
+							ukupno.setAttribute("class","note");
+							ukupno.innerHTML	=	"<b>Ukupno: </b> " + dug.iznos+" EUR";
+							extraInfo.appendChild(ukupno);
+
+							var procenat	=	document.createElement("DIV");
+							procenat.setAttribute("class","note");
+							procenat.innerHTML	=	"<b>Procenat: </b> "+ dug.procenat+" %";
+							extraInfo.appendChild(procenat);
+
+							var rata	=	document.createElement("DIV");
+							rata.setAttribute("class","note");
+							rata.innerHTML	=	"<b>Rata: </b> "+ eval(Number(dug.iznos)*Number(dug.procenat)/100)+" EUR";
+							extraInfo.appendChild(rata);
+
+							var naplaceno	=	document.createElement("DIV");
+							naplaceno.setAttribute("class","note");
+							naplaceno.innerHTML	=	"<b>Naplaceno: </b>0 EUR";
+							extraInfo.appendChild(naplaceno);
+
+							var komentar	=	document.createElement("DIV");
+							komentar.setAttribute("class","komentar");
+							komentar.innerHTML	=	dug.komentar;
+							extraInfo.appendChild(komentar);
+
+							var button	=	document.createElement("DIV");
+							button.setAttribute("class","button");
+							button.innerHTML	=	"Izmeni";
+							extraInfo.appendChild(button);
+
+						wrap.appendChild(extraInfo);
+
+					document.getElementById("duznici-lista").appendChild(wrap);
+				}
+
+				function dropdown(elem){
+					if(Number(elem.dataset.opened)==1){
+						elem.parentElement.getElementsByClassName("extraInfo")[0].style.display="none";
+						elem.getElementsByClassName("expand")[0].getElementsByTagName("img")[0].classList.remove("rotate180");
+						elem.dataset.opened=0;
+					}else if(Number(elem.dataset.opened)==0){
+						elem.parentElement.getElementsByClassName("extraInfo")[0].style.display="block";
+						elem.getElementsByClassName("expand")[0].getElementsByTagName("img")[0].classList.add("rotate180");
+						elem.dataset.opened=1;
+					}
+					
+				}
+			</script>
+		</div>
+		<div class="tab">
+			<div class="tabTitle">Danas</div>
+		</div>
+		<div class="tab">
+			<div class="tabTitle">Kalendar</div>
+		</div>
+		<div class="tab">
 			<div class="tabTitle">Nov dug</div>
 			<div class="dugForm">
 				<form method="POST" action="/novi-dug" id="novi-dug">
@@ -17,11 +114,12 @@
 					</div>
 					<div class="inputWrap">
 						<div class="formTitle">Telefon</div>
-						<input type="number" name="phone">
+						<input type="number" name="telefon">
 					</div>
 					<div class="inputWrap">
 						<div class="formTitle">Datum</div>
-						<input type="date" name="datum" placeholder="Ime" id="new-date" disabled>
+						<input type="date" placeholder="Ime" id="new-date" disabled>
+						<input type="text" name="datum" id="text-date" style="display:none">
 						<script>
 							document.getElementById("new-date").value=year+"-"+month+"-"+day;
 						</script>
@@ -39,7 +137,7 @@
 					</div>
 					<div class="inputWrap">
 						<div class="formTitle">Procenat</div>
-						<input type="number" name="ime" id="procenat" oninput="procenatInput()" data-required="1">
+						<input type="number" name="procenat" id="procenat" oninput="procenatInput()" data-required="1">
 					</div>
 					<div class="inputWrap">
 						<div class="formTitle">Kamata</div>
@@ -54,7 +152,7 @@
 					</div>
 					<div class="inputWrap">
 						<div class="formTitle">Komentar</div>
-						<textarea name="komenatar"></textarea>
+						<textarea name="komentar"></textarea>
 					</div>
 					<div class="errorMessage" id="new-error"></div>
 					<div class="inputWrap">
@@ -62,15 +160,48 @@
 					</div>
 				</form>
 			</div>
-		</div>
-		<div class="tab">
-			<div class="tabTitle">Danas</div>
-		</div>
-		<div class="tab">
-			<div class="tabTitle">Kalendar</div>
-		</div>
-		<div class="tab">
-			<div class="tabTitle">Dugovi</div>
+			<script>
+				function eurInput(){
+					var iznos	=	Number(document.getElementById("eur-input").value);
+					document.getElementById("rsd-input").value	=	eval(iznos*Number(kursnaLista["eur"]["sre"])).toFixed(0);
+					procenatInput()
+				}
+
+				function rsdInput(){
+					var iznos	=	Number(document.getElementById("rsd-input").value);
+					document.getElementById("eur-input").value	=	eval(iznos/Number(kursnaLista["eur"]["sre"])).toFixed(2);
+					procenatInput()
+				}
+
+				function procenatInput(){
+					var procenat	=	Number(document.getElementById("procenat").value);
+					var iznos		=	Number(document.getElementById("eur-input").value);
+					if(procenat>0 && iznos>0){
+						document.getElementById("eur-calc").value	=	eval(iznos*procenat/100).toFixed(2);
+						document.getElementById("rsd-calc").value	=	eval(iznos*procenat/100*Number(kursnaLista["eur"]["sre"])).toFixed(0);
+
+					}
+				}
+
+				function shouldSubmitNewUser(){
+					var inputs	=	document.getElementById("novi-dug").getElementsByTagName("INPUT");
+					var submit 	=	true;
+					for(var i=0;i<inputs.length;i++){
+						if(Number(inputs[i].dataset.required)==1 && !inputs[i].value){
+							submit	=	false;
+						}
+					}
+
+					if(submit){
+						document.getElementById("new-error").innerHTML	=	"";
+						document.getElementById("text-date").value	=	document.getElementById("new-date").value;
+						document.getElementById("load-box").style.display="block";
+						document.getElementById("novi-dug").submit();
+					}else{
+						document.getElementById("new-error").innerHTML	=	"Nisu popunjena sva bitna polja";
+					}
+				}
+			</script>
 		</div>
 		<div class="tab">
 			<div class="tabTitle">Kursna Lista</div>
@@ -82,6 +213,56 @@
 					</div>
 				</div>
 			</div>
+			<script>
+				//Valute inicijalizacija
+				var wrap	=	document.getElementById("kurs");
+				for(var i=0;i<valute.length;i++){
+					var inputWrap	=	document.createElement("DIV");
+					inputWrap.setAttribute("class","inputWrap");
+
+						var note	=	document.createElement("DIV");
+						note.setAttribute("class","note");
+						note.innerHTML	=	valute[i].toUpperCase()+":";
+						inputWrap.appendChild(note);
+
+						var input	=	document.createElement("DIV");
+						input.setAttribute("class","input");
+
+							var inputField	=	document.createElement("INPUT");
+							inputField.setAttribute("class","valuta");
+							inputField.setAttribute("type","number");
+							inputField.setAttribute("data-valuta",valute[i]);
+							inputField.setAttribute("oninput","valutaInput(this)");
+							input.appendChild(inputField)
+
+						inputWrap.appendChild(input);
+
+					wrap.appendChild(inputWrap);
+				}
+
+				function valutaInput(elem){
+					var valuta		=	elem.dataset.valuta;
+					var vrednost	=	Number(elem.value);
+					var inputs		=	document.getElementById("kurs").getElementsByClassName("valuta");
+					console.log(inputs.length)
+					if(valuta=="rsd"){
+						for(var i=0;i<inputs.length;i++){
+							var current	=	inputs[i].dataset.valuta;
+							if(current!="rsd"){
+								inputs[i].value	=	eval(vrednost/Number(kursnaLista[current]["sre"])).toFixed(2);
+							}
+						}
+					}else{
+						inputs[0].value	=	eval(vrednost*Number(kursnaLista[valuta]["sre"])).toFixed(0);
+						for(var i=0;i<inputs.length;i++){
+							var current	=	inputs[i].dataset.valuta;
+							if(current!="rsd" && current!=valuta){
+								inputs[i].value	=	eval(inputs[0].value/Number(kursnaLista[current]["sre"])).toFixed(2);
+							}
+						}
+					}
+				}
+			</script>
 		</div>
 	</div>
 	<script>
@@ -127,94 +308,6 @@
 						tabs[i].classList.add("right");
 					}
 				}
-			}
-		}
-
-		//Valute inicijalizacija
-		var wrap	=	document.getElementById("kurs");
-		for(var i=0;i<valute.length;i++){
-			var inputWrap	=	document.createElement("DIV");
-			inputWrap.setAttribute("class","inputWrap");
-
-				var note	=	document.createElement("DIV");
-				note.setAttribute("class","note");
-				note.innerHTML	=	valute[i].toUpperCase()+":";
-				inputWrap.appendChild(note);
-
-				var input	=	document.createElement("DIV");
-				input.setAttribute("class","input");
-
-					var inputField	=	document.createElement("INPUT");
-					inputField.setAttribute("class","valuta");
-					inputField.setAttribute("type","number");
-					inputField.setAttribute("data-valuta",valute[i]);
-					inputField.setAttribute("oninput","valutaInput(this)");
-					input.appendChild(inputField)
-
-				inputWrap.appendChild(input);
-
-			wrap.appendChild(inputWrap);
-		}
-
-		function valutaInput(elem){
-			var valuta		=	elem.dataset.valuta;
-			var vrednost	=	Number(elem.value);
-			var inputs		=	document.getElementById("kurs").getElementsByClassName("valuta");
-			console.log(inputs.length)
-			if(valuta=="rsd"){
-				for(var i=0;i<inputs.length;i++){
-					var current	=	inputs[i].dataset.valuta;
-					if(current!="rsd"){
-						inputs[i].value	=	eval(vrednost/Number(kursnaLista[current]["sre"])).toFixed(2);
-					}
-				}
-			}else{
-				inputs[0].value	=	eval(vrednost*Number(kursnaLista[valuta]["sre"])).toFixed(0);
-				for(var i=0;i<inputs.length;i++){
-					var current	=	inputs[i].dataset.valuta;
-					if(current!="rsd" && current!=valuta){
-						inputs[i].value	=	eval(inputs[0].value/Number(kursnaLista[current]["sre"])).toFixed(2);
-					}
-				}
-			}
-		}
-
-		function eurInput(){
-			var iznos	=	Number(document.getElementById("eur-input").value);
-			document.getElementById("rsd-input").value	=	eval(iznos*Number(kursnaLista["eur"]["sre"])).toFixed(0);
-			procenatInput()
-		}
-
-		function rsdInput(){
-			var iznos	=	Number(document.getElementById("rsd-input").value);
-			document.getElementById("eur-input").value	=	eval(iznos/Number(kursnaLista["eur"]["sre"])).toFixed(2);
-			procenatInput()
-		}
-
-		function procenatInput(){
-			var procenat	=	Number(document.getElementById("procenat").value);
-			var iznos		=	Number(document.getElementById("eur-input").value);
-			if(procenat>0 && iznos>0){
-				document.getElementById("eur-calc").value	=	eval(iznos*procenat/100).toFixed(2);
-				document.getElementById("rsd-calc").value	=	eval(iznos*procenat/100*Number(kursnaLista["eur"]["sre"])).toFixed(0);
-
-			}
-		}
-
-		function shouldSubmitNewUser(){
-			var inputs	=	document.getElementById("novi-dug").getElementsByTagName("INPUT");
-			var submit 	=	true;
-			for(var i=0;i<inputs.length;i++){
-				if(Number(inputs[i].dataset.required)==1 && !inputs[i].value){
-					submit	=	false;
-				}
-			}
-
-			if(submit){
-				document.getElementById("new-error").innerHTML	=	"";
-				document.getElementById("novi-dug").submit();
-			}else{
-				document.getElementById("new-error").innerHTML	=	"Nisu popunjena sva bitna polja";
 			}
 		}
 
