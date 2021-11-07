@@ -6,7 +6,7 @@
 				<input type="text" name="username" placeholder="Ime" id="username">
 			</div>
 			<div class="inputWrap">
-				<input type="password" name="pin" placeholder="PIN" id="pin" oninput="pinInput()">
+				<input type="password" name="pin" placeholder="PIN" id="pin"  pattern="[0-9]*" inputmode="numeric" oninput="pinInput()">
 			</div>
 		</form>
 		<script>

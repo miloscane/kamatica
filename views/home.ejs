@@ -21,7 +21,13 @@
 				</script>
 			</form>
 			<div id="danas" class="agenda"></div>
+			<div style="margin-top:10px;padding-top:10px;border-top:2px solid rgb(255,255,255)">
+				<b>Ukupno za naplatu: </b> <span id="total-to-pay-today"></span><br>
+				<b>Ukupno naplaceno: </b> <span id="total-to-be-pay-today"></span>
+			</div>
 			<script>
+				var totalToPayToday	=	0;
+				var totalPayedToday =	0;
 				for(var i=0;i<dugovi.length;i++){
 					var dug	=	JSON.parse(JSON.stringify(dugovi[i]));
 					if(Number(dug.dan) == Number(day)){
@@ -30,6 +36,7 @@
 							for(var j=0;j<dug.naplate.length;j++){
 								if(Number(dug.naplate[j].godina)==Number(year) && Number(dug.naplate[j].mesec)==Number(month)){
 									naplaceno	=	true;
+									totalPayedToday	+=	Number(dug.iznos)*Number(dug.procenat)/100;
 								}
 							}
 						}
@@ -44,6 +51,7 @@
 
 								var rata 	=	document.createElement("DIV");
 								rata.setAttribute("class","inlineItem rata");
+								totalToPayToday	+=	Number(dug.iznos)*Number(dug.procenat)/100;
 								rata.innerHTML	=	Number(dug.iznos)*Number(dug.procenat)/100+" EUR";
 								wrap.appendChild(rata);
 
@@ -86,6 +94,8 @@
 
 					}
 				}
+				document.getElementById("total-to-pay-today").innerHTML	=	totalToPayToday + " EUR";
+				document.getElementById("total-to-be-pay-today").innerHTML	=	totalPayedToday + " EUR";
 
 				function naplata(id){
 					document.getElementById("id-naplata").value = id;
@@ -96,7 +106,11 @@
 		<div class="tab">
 			<div class="tabTitle">Sutra</div>
 			<div id="sutra" class="agenda"></div>
+			<div style="margin-top:10px;padding-top:10px;border-top:2px solid rgb(255,255,255)">
+				<b>Ukupno za naplatu: </b> <span id="total-to-pay-tomorrow"></span>
+			</div>
 			<script>
+				var totalToPayTomorrow	=	0;
 				for(var i=0;i<dugovi.length;i++){
 					var dug	=	JSON.parse(JSON.stringify(dugovi[i]));
 					if(Number(dug.dan) == Number(day)+1){
@@ -110,12 +124,14 @@
 
 							var rata 	=	document.createElement("DIV");
 							rata.setAttribute("class","inlineItem rata");
+							totalToPayTomorrow +=	Number(dug.iznos)*Number(dug.procenat)/100;
 							rata.innerHTML	=	Number(dug.iznos)*Number(dug.procenat)/100+" EUR";
 							wrap.appendChild(rata);
 
 						document.getElementById("sutra").appendChild(wrap);
 					}
 				}
+				document.getElementById("total-to-pay-tomorrow").innerHTML	=	totalToPayTomorrow+" EUR";
 			</script>
 		</div>
 		<div class="tab">
