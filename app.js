@@ -72,6 +72,7 @@ server.get('/',function(req,res){
 							user: 		req.session.user,
 							dugovi: 	result 
 						});	
+						client.close();
 					}
 				});
 			}
@@ -131,21 +132,21 @@ server.post('/login',function(req,res){
 							            let json = JSON.parse(body);
 							            sessionObject.kursnaLista = JSON.stringify(json);
 							            req.session.user	=	sessionObject;
-													res.redirect('/');
 													client.close();
+													res.redirect('/');
 							        } catch (error) {
 							            console.error(error.message);
 							            req.session.user	=	sessionObject;
-													res.redirect('/');
 													client.close();
+													res.redirect('/');
 							        };
 							    });
 
 							}).on("error", (error) => {
 							    console.error(error.message);
 							    req.session.user	=	sessionObject;
-									res.redirect('/');
 									client.close();
+									res.redirect('/');
 							});
 							
 							
@@ -185,9 +186,9 @@ server.post('/novi-dug',function(req,res){
 							console.log(err);
 							res.send(err);
 						}else{
+							client.close();
 							res.redirect('/');
 						}
-						client.close();
 					});
 				}
 			});
@@ -220,9 +221,9 @@ server.post('/izmena-duga',function(req,res){
 							console.log(err)
 							res.send(err);
 						}else{
+							client.close();
 							res.redirect('/');
 						}
-						client.close();
 					});
 				}
 			});
@@ -233,30 +234,32 @@ server.post('/izmena-duga',function(req,res){
 
 server.post('/naplata',function(req,res){
 	if(req.session.user){
+		var id	=	req.body.idnaplata;
 		mongoClient.connect(mongoUrl,{useUnifiedTopology: true},function(err,client){
 			if(err){
 				console.log(err);
 				res.send(err);
 			}else{
 				var duznici	=	client.db('Kamatica').collection('Duznici');
-				duznici.find({id:req.body.id}).toArray(function(err,result){
+				duznici.find({id:id}).toArray(function(err,result){
 					if(err){
 						console.log(err);
 						res.send(err);
 					}else{
 						var dugJson 		=	JSON.parse(JSON.stringify(result[0]));
+						delete dugJson._id
 						var naplata			=	{};
 						naplata.godina	=	req.body.godina;
 						naplata.mesec		=	req.body.mesec;
 						dugJson.naplate.push(naplata);
-						duznici.replaceOne({id:req.body.id},dugJson, function(err,result){
+						duznici.replaceOne({id:id},dugJson, function(err,result){
 							if(err){
 								console.log(err)
 								res.send(err);
 							}else{
+								client.close();
 								res.redirect('/');
 							}
-							client.close();
 						});
 					}
 					

@@ -12,7 +12,7 @@
 		<div class="tab">
 			<div class="tabTitle">Danas</div>
 			<form style="display:none" method="POST" action="/naplata" id="naplata">
-				<input type="text" name="id" id="id-naplata">
+				<input type="text" name="idnaplata" id="id-naplata">
 				<input type="number" name="mesec" id="mesec-naplata">
 				<input type="number" name="godina" id="godina-naplata">
 				<script>
@@ -27,8 +27,8 @@
 					if(Number(dug.dan) == Number(day)){
 						var naplaceno	=	false;
 						if(dug.naplate){
-							for(var i=0;i<dug.naplate.length;i++){
-								if(Number(dug.naplate[i].godine)==Number(year) && Number(dug.naplate[i].mesec)==Number(month)){
+							for(var j=0;j<dug.naplate.length;j++){
+								if(Number(dug.naplate[j].godina)==Number(year) && Number(dug.naplate[j].mesec)==Number(month)){
 									naplaceno	=	true;
 								}
 							}
@@ -57,7 +57,7 @@
 
 								var naplaceno 	=	document.createElement("DIV");
 								naplaceno.setAttribute("class","inlineItem button");
-								naplaceno.setAttribute("onclick","naplata("+dug.id+")");
+								naplaceno.setAttribute("onclick","naplata(\""+dug.id+"\")");
 								naplaceno.innerHTML	=	"Naplaceno";
 								wrap.appendChild(naplaceno);
 
@@ -88,13 +88,35 @@
 				}
 
 				function naplata(id){
-					document.getElementById("id-naplate").value = id;
+					document.getElementById("id-naplata").value = id;
 					document.getElementById("naplata").submit();
 				}
 			</script>
 		</div>
 		<div class="tab">
 			<div class="tabTitle">Sutra</div>
+			<div id="sutra" class="agenda"></div>
+			<script>
+				for(var i=0;i<dugovi.length;i++){
+					var dug	=	JSON.parse(JSON.stringify(dugovi[i]));
+					if(Number(dug.dan) == Number(day)+1){
+						var wrap 	=	document.createElement("DIV");
+						wrap.setAttribute("class","wrap");
+
+							var ime 	=	document.createElement("DIV");
+							ime.setAttribute("class","inlineItem ime");
+							ime.innerHTML	=	dug.ime;
+							wrap.appendChild(ime);
+
+							var rata 	=	document.createElement("DIV");
+							rata.setAttribute("class","inlineItem rata");
+							rata.innerHTML	=	Number(dug.iznos)*Number(dug.procenat)/100+" EUR";
+							wrap.appendChild(rata);
+
+						document.getElementById("sutra").appendChild(wrap);
+					}
+				}
+			</script>
 		</div>
 		<div class="tab">
 			<div class="tabTitle">Dugovi</div>
