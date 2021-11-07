@@ -1,5 +1,7 @@
 <%- include ("partials/header") -%>
-	
+	<script>
+		var dugovi		=	<%- JSON.stringify(dugovi) %>;
+	</script>
 	<div class="tabsWrap" id="tabs">
 		<div class="arrowLeft hidden" onclick="navigate(this,-1)">
 			<img src="/icons/nav-arrow.svg">
@@ -8,81 +10,334 @@
 			<img src="/icons/nav-arrow.svg">
 		</div>
 		<div class="tab">
+			<div class="tabTitle">Danas</div>
+			<form style="display:none" method="POST" action="/naplata" id="naplata">
+				<input type="text" name="id" id="id-naplata">
+				<input type="number" name="mesec" id="mesec-naplata">
+				<input type="number" name="godina" id="godina-naplata">
+				<script>
+					document.getElementById("godina-naplata").value 	=	Number(year);
+					document.getElementById("mesec-naplata").value 		=	Number(month);
+				</script>
+			</form>
+			<div id="danas" class="agenda"></div>
+			<script>
+				for(var i=0;i<dugovi.length;i++){
+					var dug	=	JSON.parse(JSON.stringify(dugovi[i]));
+					if(Number(dug.dan) == Number(day)){
+						var naplaceno	=	false;
+						if(dug.naplate){
+							for(var i=0;i<dug.naplate.length;i++){
+								if(Number(dug.naplate[i].godine)==Number(year) && Number(dug.naplate[i].mesec)==Number(month)){
+									naplaceno	=	true;
+								}
+							}
+						}
+						if(!naplaceno){
+							var wrap 	=	document.createElement("DIV");
+							wrap.setAttribute("class","wrap");
+
+								var ime 	=	document.createElement("DIV");
+								ime.setAttribute("class","inlineItem ime");
+								ime.innerHTML	=	dug.ime;
+								wrap.appendChild(ime);
+
+								var rata 	=	document.createElement("DIV");
+								rata.setAttribute("class","inlineItem rata");
+								rata.innerHTML	=	Number(dug.iznos)*Number(dug.procenat)/100+" EUR";
+								wrap.appendChild(rata);
+
+								var div 	=	document.createElement("DIV");
+								wrap.appendChild(div);
+
+								var pozovi 	=	document.createElement("DIV");
+								pozovi.setAttribute("class","inlineItem button");
+								pozovi.innerHTML	=	"<a href=\"tel:"+dug.telefon+"\">Pozovi</a>";
+								wrap.appendChild(pozovi);
+
+								var naplaceno 	=	document.createElement("DIV");
+								naplaceno.setAttribute("class","inlineItem button");
+								naplaceno.setAttribute("onclick","naplata("+dug.id+")");
+								naplaceno.innerHTML	=	"Naplaceno";
+								wrap.appendChild(naplaceno);
+
+								/*var div 	=	document.createElement("DIV");
+								div.setAttribute("style","margin:4px auto")
+								wrap.appendChild(div);
+
+								var odlozi 	=	document.createElement("DIV");
+								odlozi.setAttribute("class","inlineItem button");
+								odlozi.innerHTML	=	"Odlozi";
+								wrap.appendChild(odlozi);
+
+								var div	=	document.createElement("DIV");
+								div.setAttribute("class","inlineItem");
+
+									var input	=	document.createElement("INPUT");
+									input.setAttribute("type","number");
+									input.setAttribute("id","delay-days");
+									input.setAttribute("placeholder","Dana");
+									div.appendChild(input);
+
+								wrap.appendChild(div);*/
+
+							document.getElementById("danas").appendChild(wrap);
+						}
+
+					}
+				}
+
+				function naplata(id){
+					document.getElementById("id-naplate").value = id;
+					document.getElementById("naplata").submit();
+				}
+			</script>
+		</div>
+		<div class="tab">
+			<div class="tabTitle">Sutra</div>
+		</div>
+		<div class="tab">
 			<div class="tabTitle">Dugovi</div>
-			<div id="izmena-duga"></div>
+			<div id="izmena-duga-wrap" style="display:none">
+				<form method="POST" action="/izmena-duga" id="izmena-duga">
+					<div class="inputWrap">
+						<div class="formTitle">Ime</div>
+						<input type="text" name="id" id="izmena-id" style="display:none">
+						<input type="text" name="ime" id="izmena-ime" data-required="1">
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Telefon</div>
+						<input type="number" name="telefon" id="izmena-telefon">
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Datum</div>
+						<input type="date" id="izmena-datum">
+						<input type="text" name="datum" id="izmena-text-datum" style="display:none">
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Status:</div>
+						<select name="status" id="izmena-status">
+							<option value="Aktivan">Aktivan</option>
+							<option value="Stopiran">Stopiran</option>
+							<option value="Zavrsen">Zavrsen</option>
+						</select>
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Iznos</div>
+						<div class="inlineHalf">
+							<input type="number" name="eur" id="eur-input-izmena" oninput="eurInputIzmena()" data-required="1">
+							<div class="formNote">EUR</div>
+						</div>
+						<div class="inlineHalf">
+							<input type="number" name="rsd" id="rsd-input-izmena" oninput="rsdInputIzmena()">
+							<div class="formNote">RSD</div>
+						</div>
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Procenat</div>
+						<input type="number" name="procenat" id="procenat-izmena" oninput="procenatInputIzmena()" data-required="1">
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Kamata</div>
+						<div class="inlineHalf">
+							<input type="number" id="eur-calc-izmena" disabled>
+							<div class="formNote">EUR</div>
+						</div>
+						<div class="inlineHalf">
+							<input type="number" id="rsd-calc-izmena" disabled>
+							<div class="formNote">RSD</div>
+						</div>
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Komentar</div>
+						<textarea name="komentar" id="izmena-komentar"></textarea>
+					</div>
+					<input type="text" name="naplate" id="naplata-izmene" style="display:none">
+					<div class="errorMessage" id="izmena-error"></div>
+					<div class="inputWrap">
+						<div class="button" onclick="shouldSubmitIzmenaUser()">Sačuvaj</div>
+					</div>
+				</form>
+			</div>
+			<script>
+				function initIzmena(id){
+					for(var i=0;i<dugovi.length;i++){
+						if(dugovi[i].id==id){
+							var dug	=	JSON.parse(JSON.stringify(dugovi[i]));
+							break;
+						}
+					}
+					if(dug){
+						document.getElementById("izmena-duga-wrap").style.display	=	"block";
+						window.scrollTo(0,0);
+						document.getElementById("izmena-id").value			=	dug.id;
+						document.getElementById("izmena-ime").value			=	dug.ime;
+						document.getElementById("izmena-telefon").value		=	dug.telefon;
+						document.getElementById("izmena-datum").value		=	dug.datum;
+						document.getElementById("izmena-status").value		=	dug.status;
+						document.getElementById("eur-input-izmena").value	=	dug.iznos;
+						document.getElementById("rsd-input-izmena").value	=	eurToRsd(dug.iznos);
+						document.getElementById("procenat-izmena").value	=	dug.procenat;
+						document.getElementById("eur-calc-izmena").value	=	dug.iznos*dug.procenat/100;
+						document.getElementById("rsd-calc-izmena").value	=	eurToRsd(dug.iznos*dug.procenat/100);
+						document.getElementById("izmena-komentar").value	=	dug.komentar;
+						if(dug.naplate){
+							document.getElementById("naplata-izmene").value	=	JSON.stringify(dug.naplate);
+						}else{
+							document.getElementById("naplata-izmene").value	=	JSON.stringify([]);
+						}
+					}
+				}
+
+				function eurInputIzmena(){
+					var iznos	=	Number(document.getElementById("eur-input-izmena").value);
+					document.getElementById("rsd-input-izmena").value	=	eurToRsd(iznos);
+					procenatInputIzmena()
+				}
+
+				function rsdInputIzmena(){
+					var iznos	=	Number(document.getElementById("rsd-input-izmena").value);
+					document.getElementById("eur-input-izmena").value	=	rsdToEur(iznos);
+					procenatInputIzmena()
+				}
+
+				function procenatInputIzmena(){
+					var procenat	=	Number(document.getElementById("procenat-izmena").value);
+					var iznos		=	Number(document.getElementById("eur-input-izmena").value);
+					if(procenat>0 && iznos>0){
+						document.getElementById("eur-calc-izmena").value	=	eval(iznos*procenat/100).toFixed(2);
+						document.getElementById("rsd-calc-izmena").value	=	eurToRsd(iznos*procenat/100);
+					}
+				}
+
+				function shouldSubmitIzmenaUser(){
+					var inputs	=	document.getElementById("izmena-duga").getElementsByTagName("INPUT");
+					var submit 	=	true;
+					for(var i=0;i<inputs.length;i++){
+						if(Number(inputs[i].dataset.required)==1 && !inputs[i].value){
+							submit	=	false;
+						}
+					}
+
+					if(submit){
+						document.getElementById("izmena-error").innerHTML	=	"";
+						document.getElementById("izmena-text-datum").value	=	document.getElementById("izmena-datum").value;
+						document.getElementById("load-box").style.display="block";
+						document.getElementById("izmena-duga").submit();
+					}else{
+						document.getElementById("izmena-error").innerHTML	=	"Nisu popunjena sva bitna polja";
+					}
+				}
+			</script>
+			<table class="dugoviUkupno">
+				<tr>
+					<td>Ukupno pozajmljeno:</td>
+					<td><span id="total-zajam"></span></td>
+				</tr>
+				<tr>
+					<td>Ukupno rate:</td>
+					<td><span id="total-kamata"></span></td>
+				</tr>
+				<tr>
+					<td>Ukupno naplaceno:</td>
+					<td><span id="total-naplaceno"></span></td>
+				</tr>
+			</table>
 			<div id="duznici-lista"></div>
 			<script>
-				var dugovi	=	<%- JSON.stringify(dugovi) %>;
-				console.log(dugovi);
+				var totalDug	=	0;
+				var totalKamata	=	0;
 				for(var i=0;i<dugovi.length;i++){
 					var dug 	=	JSON.parse(JSON.stringify(dugovi[i]));
-					var wrap	=	document.createElement("DIV");
-					wrap.setAttribute("class","wrap");
+					if(dug.status!="Zavrsen"){
+						totalDug	+=	Number(dug.iznos);
+						totalKamata	+=	Number(dug.iznos)*Number(dug.procenat)/100;
+						var wrap	=	document.createElement("DIV");
+						wrap.setAttribute("class","wrap");
 
-						var basicInfo	=	document.createElement("DIV");
-						basicInfo.setAttribute("class","basicInfo");
-						basicInfo.setAttribute("onclick","dropdown(this)");
-						basicInfo.setAttribute("data-opened","0");
+							var basicInfo	=	document.createElement("DIV");
+							basicInfo.setAttribute("class","basicInfo");
+							basicInfo.setAttribute("onclick","dropdown(this)");
+							basicInfo.setAttribute("data-opened","0");
 
-							var ime =	document.createElement("DIV");
-							ime.setAttribute("class","inlineItem ime");
-							ime.innerHTML	=	dug.ime;
-							basicInfo.appendChild(ime);
+								var ime =	document.createElement("DIV");
+								ime.setAttribute("class","inlineItem ime");
+								ime.innerHTML	=	dug.ime;
+								basicInfo.appendChild(ime);
 
-							var iznos =	document.createElement("DIV");
-							iznos.setAttribute("class","inlineItem iznos");
-							iznos.innerHTML	=	eval(Number(dug.iznos)*Number(dug.procenat)/100)+" EUR";
-							basicInfo.appendChild(iznos);
+								var iznos =	document.createElement("DIV");
+								iznos.setAttribute("class","inlineItem iznos");
+								iznos.innerHTML	=	eval(Number(dug.iznos)*Number(dug.procenat)/100)+" EUR";
+								basicInfo.appendChild(iznos);
 
-							var datum =	document.createElement("DIV");
-							datum.setAttribute("class","inlineItem datum");
-							datum.innerHTML	=	dateInversion(dug.datum);
-							basicInfo.appendChild(datum);
+								var datum =	document.createElement("DIV");
+								datum.setAttribute("class","inlineItem datum");
+								datum.innerHTML	=	dateInversion(dug.datum);
+								basicInfo.appendChild(datum);
 
-							var expand =	document.createElement("DIV");
-							expand.setAttribute("class","inlineItem expand");
-							expand.innerHTML	=	"<img width=\"20\" src=\"/icons/nav-arrow-down.svg\">";
-							basicInfo.appendChild(expand);
+								var expand =	document.createElement("DIV");
+								expand.setAttribute("class","inlineItem expand");
+								expand.innerHTML	=	"<img width=\"20\" src=\"/icons/nav-arrow-down.svg\">";
+								basicInfo.appendChild(expand);
 
-						wrap.appendChild(basicInfo);
+							wrap.appendChild(basicInfo);
 
-						var extraInfo	=	document.createElement("DIV");
-						extraInfo.setAttribute("class","extraInfo");
+							var extraInfo	=	document.createElement("DIV");
+							extraInfo.setAttribute("class","extraInfo");
 
-							var ukupno	=	document.createElement("DIV");
-							ukupno.setAttribute("class","note");
-							ukupno.innerHTML	=	"<b>Ukupno: </b> " + dug.iznos+" EUR";
-							extraInfo.appendChild(ukupno);
+								var ukupno	=	document.createElement("DIV");
+								ukupno.setAttribute("class","note");
+								ukupno.innerHTML	=	"<b>Ukupno: </b> " + dug.iznos+" EUR";
+								extraInfo.appendChild(ukupno);
 
-							var procenat	=	document.createElement("DIV");
-							procenat.setAttribute("class","note");
-							procenat.innerHTML	=	"<b>Procenat: </b> "+ dug.procenat+" %";
-							extraInfo.appendChild(procenat);
+								var procenat	=	document.createElement("DIV");
+								procenat.setAttribute("class","note");
+								procenat.innerHTML	=	"<b>Procenat: </b> "+ dug.procenat+" %";
+								extraInfo.appendChild(procenat);
 
-							var rata	=	document.createElement("DIV");
-							rata.setAttribute("class","note");
-							rata.innerHTML	=	"<b>Rata: </b> "+ eval(Number(dug.iznos)*Number(dug.procenat)/100)+" EUR";
-							extraInfo.appendChild(rata);
+								var rata	=	document.createElement("DIV");
+								rata.setAttribute("class","note");
+								rata.innerHTML	=	"<b>Rata: </b> "+ eval(Number(dug.iznos)*Number(dug.procenat)/100)+" EUR";
+								extraInfo.appendChild(rata);
 
-							var naplaceno	=	document.createElement("DIV");
-							naplaceno.setAttribute("class","note");
-							naplaceno.innerHTML	=	"<b>Naplaceno: </b>0 EUR";
-							extraInfo.appendChild(naplaceno);
+								var naplaceno	=	document.createElement("DIV");
+								naplaceno.setAttribute("class","note");
+								naplaceno.innerHTML	=	"<b>Naplaceno: </b>0 EUR";
+								extraInfo.appendChild(naplaceno);
 
-							var komentar	=	document.createElement("DIV");
-							komentar.setAttribute("class","komentar");
-							komentar.innerHTML	=	dug.komentar;
-							extraInfo.appendChild(komentar);
+								if(dug.status=="Stopiran"){
+									var sledeca	=	document.createElement("DIV");
+									sledeca.setAttribute("class","note");
+									sledeca.innerHTML	=	"<b>Stopiran dug</b>";
+									extraInfo.appendChild(sledeca);
+								}else{
+									var sledeca	=	document.createElement("DIV");
+									sledeca.setAttribute("class","note");
+									sledeca.innerHTML	=	"<b>Sledeca naplata: </b>"+ daysTillPayment(dug.datum) +" dana";
+									extraInfo.appendChild(sledeca);
+								}
+								
 
-							var button	=	document.createElement("DIV");
-							button.setAttribute("class","button");
-							button.innerHTML	=	"Izmeni";
-							extraInfo.appendChild(button);
+								var komentar	=	document.createElement("DIV");
+								komentar.setAttribute("class","komentar");
+								komentar.innerHTML	=	dug.komentar;
+								extraInfo.appendChild(komentar);
 
-						wrap.appendChild(extraInfo);
+								var button	=	document.createElement("DIV");
+								button.setAttribute("class","button");
+								button.setAttribute("onclick","initIzmena(\""+dug.id+"\")");
+								button.innerHTML	=	"Izmeni";
+								extraInfo.appendChild(button);
 
-					document.getElementById("duznici-lista").appendChild(wrap); 
+							wrap.appendChild(extraInfo);
+
+						document.getElementById("duznici-lista").appendChild(wrap);	
+					}
+					 
 				}
+				document.getElementById("total-zajam").innerHTML		=	totalDug + " EUR";
+				document.getElementById("total-kamata").innerHTML		=	totalKamata + " EUR mesecno";
+				document.getElementById("total-naplaceno").innerHTML	=	"0 EUR";
 
 				function dropdown(elem){
 					if(Number(elem.dataset.opened)==1){
@@ -97,12 +352,6 @@
 					
 				}
 			</script>
-		</div>
-		<div class="tab">
-			<div class="tabTitle">Danas</div>
-		</div>
-		<div class="tab">
-			<div class="tabTitle">Kalendar</div>
 		</div>
 		<div class="tab">
 			<div class="tabTitle">Nov dug</div>
@@ -163,13 +412,13 @@
 			<script>
 				function eurInput(){
 					var iznos	=	Number(document.getElementById("eur-input").value);
-					document.getElementById("rsd-input").value	=	eval(iznos*Number(kursnaLista["eur"]["sre"])).toFixed(0);
+					document.getElementById("rsd-input").value	=	eurToRsd(iznos);
 					procenatInput()
 				}
 
 				function rsdInput(){
 					var iznos	=	Number(document.getElementById("rsd-input").value);
-					document.getElementById("eur-input").value	=	eval(iznos/Number(kursnaLista["eur"]["sre"])).toFixed(2);
+					document.getElementById("eur-input").value	=	rsdToEur(iznos);
 					procenatInput()
 				}
 
@@ -178,8 +427,7 @@
 					var iznos		=	Number(document.getElementById("eur-input").value);
 					if(procenat>0 && iznos>0){
 						document.getElementById("eur-calc").value	=	eval(iznos*procenat/100).toFixed(2);
-						document.getElementById("rsd-calc").value	=	eval(iznos*procenat/100*Number(kursnaLista["eur"]["sre"])).toFixed(0);
-
+						document.getElementById("rsd-calc").value	=	eurToRsd(iznos*procenat/100);
 					}
 				}
 

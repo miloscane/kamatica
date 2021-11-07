@@ -45,7 +45,8 @@ body {
 	line-height: 1.5;
 	font-weight: 300;
 	font-size: 16px;
-	overflow: auto;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 table { 
@@ -180,7 +181,7 @@ input::-webkit-inner-spin-button {
 	width: 20px;
 	position: absolute;
 	left: 0;
-	top: 100px;
+	top: calc( 50vh - 25px ) ;
 	cursor: pointer;
 }
 
@@ -188,7 +189,7 @@ input::-webkit-inner-spin-button {
 	width: 20px;
 	position: absolute;
 	right: 0;
-	top: 100px;
+	top: calc( 50vh - 25px ) ;
 	cursor: pointer;
 	-webkit-transform: rotate(180deg);
 	-moz-transform: rotate(180deg);
@@ -198,10 +199,10 @@ input::-webkit-inner-spin-button {
 }
 
 .tabsWrap .tab{
-	width: calc( 100% - 50px);
+	width: calc( 100% - 70px);
 	position: absolute;
 	top: 0;
-	left: 25px;
+	left: 35px;
 	-webkit-transition: all ease 0.2s;
 	-moz-transition: all ease 0.2s;
 	-ms-transition: all ease 0.2s;
@@ -376,13 +377,12 @@ input::-webkit-inner-spin-button {
 	vertical-align: top;
 	text-align: left;
 	padding-left: 5px;
-	font-size: 16px;
-	font-weight: 200;
+	font-size: 13px;
+	font-weight: 500;
 }
 
 #duznici-lista .ime{
 	width: 30%;
-	padding-left: 0;
 }
 
 #duznici-lista .iznos{
@@ -422,17 +422,146 @@ input::-webkit-inner-spin-button {
 #duznici-lista .extraInfo .komentar{
 	font-size: 12px;
 	padding: 4px;
+	padding-left: 7px;
 }
 
 #duznici-lista .extraInfo .note{
 	font-size: 12px;
 	padding: 4px;
+	padding-left: 7px;
 }
 
 
 
+#izmena-duga .inputWrap{
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+#izmena-duga  .inputWrap input{
+	width: 100%;
+	padding: 10px;
+	font-weight: 600;
+	font-size: 18px;
+	background-color: rgba(0,0,0,0.3);
+	border: 1px solid rgb(255,255,255);
+	color: rgb(255,255,255);
+	border-radius: 3px;
+	text-align: center;
+}
+
+#izmena-duga .inputWrap textarea{
+	width: 100%;
+	padding: 10px;
+	font-weight: 200;
+	font-size: 14px;
+	background-color: rgba(0,0,0,0.3);
+	border: 1px solid rgb(255,255,255);
+	color: rgb(255,255,255);
+	border-radius: 3px;
+	text-align: left;
+	height: 100px;
+}
+
+#izmena-duga input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgba(255,255,255,0.5);
+	font-weight: 200;
+  opacity: 1; /* Firefox */
+}
+
+#izmena-duga input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: rgba(255,255,255,0.5);
+	font-weight: 200;
+}
+
+#izmena-duga input::-ms-input-placeholder { /* Microsoft Edge */
+  color: rgba(255,255,255,0.5);
+	font-weight: 200;
+}
+
+#izmena-duga .inputWrap .inlineHalf{
+	width: 45%;
+	display: inline-block;
+	margin: 0 2%;
+}
+
+.dugoviUkupno{
+	font-size: 14px;
+	margin-bottom: 10px;
+	border-bottom: 2px solid rgb(255,255,255);
+}
+
+.dugoviUkupno td{
+	padding: 4px 2px;
+}
+
+.dugoviUkupno td:first-child{
+	font-weight: 500;
+}
+
+.dugoviUkupno tr:nth-child(2){
+	background-color: rgba(255,255,255,0.2);
+}
+
+.agenda .wrap{
+	padding: 5px;
+	border-bottom: 1px solid rgb(255,255,255);
+	font-size: 16px;
+	text-align: left;
+}
 
 
+.agenda .wrap:nth-child(even){
+	background-color: rgba(255,255,255,0.2);
+}
+
+.agenda .wrap .inlineItem{
+	display: inline-block;
+	vertical-align: top;
+	width: 45%;
+}
+
+.agenda .wrap .button{
+	font-size: 14px;
+	padding: 1px 2px;
+	width: auto !important;
+	margin-right: 10px;
+}
+
+
+.agenda input{
+	width: 55px;
+	padding: 5px;
+	font-weight: 600;
+	font-size: 14px;
+	background-color: rgba(0,0,0,0.3);
+	border: 1px solid rgb(255,255,255);
+	color: rgb(255,255,255);
+	border-radius: 3px;
+	text-align: center;
+}
+
+
+.agenda input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgba(255,255,255,0.5);
+	font-weight: 200;
+  opacity: 1; /* Firefox */
+}
+
+.agenda input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: rgba(255,255,255,0.5);
+	font-weight: 200;
+}
+
+.agenda input::-ms-input-placeholder { /* Microsoft Edge */
+  color: rgba(255,255,255,0.5);
+	font-weight: 200;
+}
+
+.button a{
+	display: block;
+	text-decoration: none;
+}
 
 
 

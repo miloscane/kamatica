@@ -169,10 +169,12 @@ server.post('/novi-dug',function(req,res){
 			dugJson.ime 			=	req.body.ime;
 			dugJson.telefon		=	req.body.telefon ? req.body.telefon : "";
 			dugJson.datum 		=	req.body.datum;
+			dugJson.dan 			=	req.body.datum.split("-")[2];
 			dugJson.iznos 		=	req.body.eur;
 			dugJson.procenat	=	req.body.procenat;
 			dugJson.komentar	=	req.body.komentar;
 			dugJson.status		=	"Aktivan";
+			dugJson.naplate		=	[];
 			mongoClient.connect(mongoUrl,{useUnifiedTopology: true},function(err,client){
 				if(err){
 					console.log(err)
@@ -192,6 +194,76 @@ server.post('/novi-dug',function(req,res){
 	}else{
 		res.redirect("/login");
 	}
-
 });
 
+server.post('/izmena-duga',function(req,res){
+	if(req.session.user){
+			var dugJson				=	{};
+			dugJson.id 				=	req.body.id;
+			dugJson.me 				=	req.session.user.username;
+			dugJson.ime 			=	req.body.ime;
+			dugJson.telefon		=	req.body.telefon ? req.body.telefon : "";
+			dugJson.datum 		=	req.body.datum;
+			dugJson.dan 			=	req.body.datum.split("-")[2];
+			dugJson.iznos 		=	req.body.eur;
+			dugJson.procenat	=	req.body.procenat;
+			dugJson.komentar	=	req.body.komentar;
+			dugJson.status		=	req.body.status;
+			dugJson.naplate		=	JSON.parse(req.body.naplate);
+			mongoClient.connect(mongoUrl,{useUnifiedTopology: true},function(err,client){
+				if(err){
+					console.log(err)
+				}else{
+					var duznici	=	client.db('Kamatica').collection('Duznici');
+					duznici.replaceOne({id:req.body.id},dugJson, function(err,result){
+						if(err){
+							console.log(err)
+							res.send(err);
+						}else{
+							res.redirect('/');
+						}
+						client.close();
+					});
+				}
+			});
+	}else{
+		res.redirect("/login");
+	}
+});
+
+server.post('/naplata',function(req,res){
+	if(req.session.user){
+		mongoClient.connect(mongoUrl,{useUnifiedTopology: true},function(err,client){
+			if(err){
+				console.log(err);
+				res.send(err);
+			}else{
+				var duznici	=	client.db('Kamatica').collection('Duznici');
+				duznici.find({id:req.body.id}).toArray(function(err,result){
+					if(err){
+						console.log(err);
+						res.send(err);
+					}else{
+						var dugJson 		=	JSON.parse(JSON.stringify(result[0]));
+						var naplata			=	{};
+						naplata.godina	=	req.body.godina;
+						naplata.mesec		=	req.body.mesec;
+						dugJson.naplate.push(naplata);
+						duznici.replaceOne({id:req.body.id},dugJson, function(err,result){
+							if(err){
+								console.log(err)
+								res.send(err);
+							}else{
+								res.redirect('/');
+							}
+							client.close();
+						});
+					}
+					
+				})
+			}
+		});
+	}else{
+		res.redirect('/login');
+	}
+});
