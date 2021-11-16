@@ -9,6 +9,7 @@
 		<div class="arrowRight" onclick="navigate(this,1)">
 			<img src="/icons/nav-arrow.svg">
 		</div>
+		<!--_________________________________________________________________DANAS______________________________________________________________-->
 		<div class="tab">
 			<div class="tabTitle">Danas</div>
 			<form style="display:none" method="POST" action="/naplata" id="naplata">
@@ -25,6 +26,22 @@
 				<b>Ukupno za naplatu: </b> <span id="total-to-pay-today"></span><br>
 				<b>Ukupno naplaceno: </b> <span id="total-to-be-pay-today"></span>
 			</div>
+			<form style="display:none" method="POST" action="/odlaganje" id="odlaganje-form">
+				<input type="text" name="idnaplata" id="odlaganje-id">
+				<input type="text" name="komentar" id="odlaganje-komentar">
+				<input type="text" name="mesec" id="odlaganje-mesec">
+				<input type="text" name="godina" id="odlaganje-godina">
+				<script>
+					document.getElementById("odlaganje-mesec").value 	=	month;
+					document.getElementById("odlaganje-godina").value 	=	year;
+
+					function odlaganje(id){
+						document.getElementById("odlaganje-id").value 	=	id;
+						document.getElementById("odlaganje-komentar").value 	=	document.getElementById("odlaganje-komentar-input").value;
+						document.getElementById("odlaganje-form").submit();
+					}
+				</script>
+			</form>
 			<script>
 				var totalToPayToday	=	0;
 				var totalPayedToday =	0;
@@ -35,8 +52,14 @@
 						if(dug.naplate){
 							for(var j=0;j<dug.naplate.length;j++){
 								if(Number(dug.naplate[j].godina)==Number(year) && Number(dug.naplate[j].mesec)==Number(month)){
-									naplaceno	=	true;
-									totalPayedToday	+=	Number(dug.iznos)*Number(dug.procenat)/100;
+									if(dug.naplate[j].delay){
+										naplaceno	=	true;
+									}else{
+										//iako je delay false ne treba da se pojavljuje dug 
+										naplaceno	=	true;
+										totalPayedToday	+=	Number(dug.iznos)*Number(dug.procenat)/100;
+									}
+									
 								}
 							}
 						}
@@ -69,25 +92,20 @@
 								naplaceno.innerHTML	=	"Naplaceno";
 								wrap.appendChild(naplaceno);
 
-								/*var div 	=	document.createElement("DIV");
+								var div 	=	document.createElement("DIV");
 								div.setAttribute("style","margin:4px auto")
 								wrap.appendChild(div);
 
 								var odlozi 	=	document.createElement("DIV");
 								odlozi.setAttribute("class","inlineItem button");
-								odlozi.innerHTML	=	"Odlozi";
+								odlozi.setAttribute("onclick","odlaganje(\""+dug.id+"\")");
+								odlozi.innerHTML	=	"Odloži";
 								wrap.appendChild(odlozi);
 
-								var div	=	document.createElement("DIV");
-								div.setAttribute("class","inlineItem");
-
-									var input	=	document.createElement("INPUT");
-									input.setAttribute("type","number");
-									input.setAttribute("id","delay-days");
-									input.setAttribute("placeholder","Dana");
-									div.appendChild(input);
-
-								wrap.appendChild(div);*/
+								var komentar 	=	document.createElement("TEXTAREA");
+								komentar.setAttribute("id","odlaganje-komentar-input");
+								komentar.setAttribute("placeholder","Komentar odlaganja");
+								wrap.appendChild(komentar);
 
 							document.getElementById("danas").appendChild(wrap);
 						}
@@ -103,6 +121,7 @@
 				}
 			</script>
 		</div>
+		<!--_________________________________________________________________SUTRA______________________________________________________________-->
 		<div class="tab">
 			<div class="tabTitle">Sutra</div>
 			<div id="sutra" class="agenda"></div>
@@ -134,6 +153,64 @@
 				document.getElementById("total-to-pay-tomorrow").innerHTML	=	totalToPayTomorrow+" EUR";
 			</script>
 		</div>
+		<!--_________________________________________________________________ODLOZENI______________________________________________________________-->
+		<div class="tab">
+			<div class="tabTitle">Odloženi</div>
+			<div id="odlozeni" class="agenda"></div>
+			<form style="display:none" id="pay-delay" method="POST" action="/naplata-odlaganja">
+				<input type="text" name="idnaplata" id="id-naplata-odlozena">
+				<input type="text" name="mesec" id="mesec-naplata-odlozena">
+				<input type="text" name="godina" id="godina-naplata-odlozena">
+				<script>
+					function payDelay(id,mesec,godina){
+						document.getElementById("id-naplata-odlozena").value 		=	id;
+						document.getElementById("mesec-naplata-odlozena").value 	=	mesec;
+						document.getElementById("godina-naplata-odlozena").value 	=	godina;
+						document.getElementById("pay-delay").submit();
+					}
+				</script>
+			</form>
+			<script>
+				for(var i=0;i<dugovi.length;i++){
+					var dug	=	JSON.parse(JSON.stringify(dugovi[i]));
+					for(var j=0;j<dug.naplate.length;j++){
+						if(dug.naplate[j].delay){
+							var wrap 	=	document.createElement("DIV");
+							wrap.setAttribute("class","wrap");
+
+								var ime 	=	document.createElement("DIV");
+								ime.setAttribute("class","inlineItem ime");
+								ime.innerHTML	=	dug.ime;
+								wrap.appendChild(ime);
+
+								var rata 	=	document.createElement("DIV");
+								rata.setAttribute("class","inlineItem rata");
+								rata.innerHTML	=	Number(dug.iznos)*Number(dug.procenat)/100+" EUR";
+								wrap.appendChild(rata);
+
+								var delay 	=	document.createElement("DIV");
+								delay.setAttribute("class","inlineItem delay");
+								delay.innerHTML	=	dug.naplate[j].mesec + "-" + dug.naplate[j].godina;
+								wrap.appendChild(delay);
+
+								var komentar 	=	document.createElement("DIV");
+								komentar.setAttribute("class","item comment");
+								komentar.innerHTML	=	dug.naplate[j].delaycomment;
+								wrap.appendChild(komentar);
+
+								var pay 	=	document.createElement("DIV");
+								pay.setAttribute("class","inlineItem button");
+								pay.setAttribute("onclick","payDelay(\""+dug.id+"\",\""+dug.naplate[j].mesec + "\",\"" + dug.naplate[j].godina+"\")");
+								pay.innerHTML	=	"Naplaceno";
+								wrap.appendChild(pay);
+
+							document.getElementById("odlozeni").appendChild(wrap);
+						}
+					}
+				}
+			</script>
+		</div>
+		<!--_________________________________________________________________SVI DUGOVI______________________________________________________________-->
 		<div class="tab">
 			<div class="tabTitle">Dugovi</div>
 			<div id="izmena-duga-wrap" style="display:none">
@@ -276,10 +353,6 @@
 					<td>Ukupno rate:</td>
 					<td><span id="total-kamata"></span></td>
 				</tr>
-				<tr>
-					<td>Ukupno naplaceno:</td>
-					<td><span id="total-naplaceno"></span></td>
-				</tr>
 			</table>
 			<div id="duznici-lista"></div>
 			<script>
@@ -375,7 +448,6 @@
 				}
 				document.getElementById("total-zajam").innerHTML		=	totalDug + " EUR";
 				document.getElementById("total-kamata").innerHTML		=	totalKamata + " EUR mesecno";
-				document.getElementById("total-naplaceno").innerHTML	=	"0 EUR";
 
 				function dropdown(elem){
 					if(Number(elem.dataset.opened)==1){
@@ -391,6 +463,7 @@
 				}
 			</script>
 		</div>
+		<!--_________________________________________________________________NOV DUG______________________________________________________________-->
 		<div class="tab">
 			<div class="tabTitle">Nov dug</div>
 			<div class="dugForm">
@@ -405,7 +478,7 @@
 					</div>
 					<div class="inputWrap">
 						<div class="formTitle">Datum</div>
-						<input type="date" placeholder="Ime" id="new-date" disabled>
+						<input type="date" placeholder="Ime" id="new-date">
 						<input type="text" name="datum" id="text-date" style="display:none">
 						<script>
 							document.getElementById("new-date").value=year+"-"+month+"-"+day;
@@ -489,6 +562,7 @@
 				}
 			</script>
 		</div>
+		<!--_________________________________________________________________KURSNA LISTA______________________________________________________________-->
 		<div class="tab">
 			<div class="tabTitle">Kursna Lista</div>
 			<div id="kurs">

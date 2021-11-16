@@ -270,3 +270,84 @@ server.post('/naplata',function(req,res){
 		res.redirect('/login');
 	}
 });
+
+server.post('/odlaganje',function(req,res){
+	if(req.session.user){
+		var id	=	req.body.idnaplata;
+		mongoClient.connect(mongoUrl,{useUnifiedTopology: true},function(err,client){
+			if(err){
+				console.log(err);
+				res.send(err);
+			}else{
+				var duznici	=	client.db('Kamatica').collection('Duznici');
+				duznici.find({id:id}).toArray(function(err,result){
+					if(err){
+						console.log(err);
+						res.send(err);
+					}else{
+						var dugJson 		=	JSON.parse(JSON.stringify(result[0]));
+						delete dugJson._id
+						var naplata						=	{};
+						naplata.godina				=	req.body.godina;
+						naplata.mesec					=	req.body.mesec;
+						naplata.delay 				=	true;
+						naplata.delaycomment	=	req.body.komentar;
+						dugJson.naplate.push(naplata);
+						duznici.replaceOne({id:id},dugJson, function(err,result){
+							if(err){
+								console.log(err)
+								res.send(err);
+							}else{
+								client.close();
+								res.redirect('/');
+							}
+						});
+					}
+					
+				})
+			}
+		});
+	}else{
+		res.redirect('/login');
+	}
+});
+
+server.post('/naplata-odlaganja',function(req,res){
+	if(req.session.user){
+		var id	=	req.body.idnaplata;
+		mongoClient.connect(mongoUrl,{useUnifiedTopology: true},function(err,client){
+			if(err){
+				console.log(err);
+				res.send(err);
+			}else{
+				var duznici	=	client.db('Kamatica').collection('Duznici');
+				duznici.find({id:id}).toArray(function(err,result){
+					if(err){
+						console.log(err);
+						res.send(err);
+					}else{
+						var dugJson 		=	JSON.parse(JSON.stringify(result[0]));
+						delete dugJson._id;
+						for(var i=0;i<dugJson.naplate.length;i++){
+							if(Number(dugJson.naplate[i].mesec)==Number(req.body.mesec) && Number(dugJson.naplate[i].godina)==Number(req.body.godina) && dugJson.naplate[i].delay){
+								dugJson.naplate[i].delay	=	false;
+							}
+						}
+						duznici.replaceOne({id:id},dugJson, function(err,result){
+							if(err){
+								console.log(err)
+								res.send(err);
+							}else{
+								client.close();
+								res.redirect('/');
+							}
+						});
+					}
+					
+				})
+			}
+		});
+	}else{
+		res.redirect('/login');
+	}
+});
