@@ -209,6 +209,106 @@
 					}
 				}
 			</script>
+		</div><!--_________________________________________________________________NOV DUG______________________________________________________________-->
+		<div class="tab">
+			<div class="tabTitle">Nov dug</div>
+			<div class="dugForm">
+				<form method="POST" action="/novi-dug" id="novi-dug">
+					<div class="inputWrap">
+						<div class="formTitle">Ime</div>
+						<input type="text" name="ime" data-required="1">
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Telefon</div>
+						<input type="number" name="telefon">
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Datum</div>
+						<input type="date" placeholder="Ime" id="new-date">
+						<input type="text" name="datum" id="text-date" style="display:none">
+						<script>
+							document.getElementById("new-date").value=year+"-"+month+"-"+day;
+						</script>
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Iznos</div>
+						<div class="inlineHalf">
+							<input type="number" name="eur" id="eur-input" oninput="eurInput()" data-required="1">
+							<div class="formNote">EUR</div>
+						</div>
+						<div class="inlineHalf">
+							<input type="number" name="rsd" id="rsd-input" oninput="rsdInput()">
+							<div class="formNote">RSD</div>
+						</div>
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Procenat</div>
+						<input type="number" name="procenat" id="procenat" oninput="procenatInput()" data-required="1">
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Kamata</div>
+						<div class="inlineHalf">
+							<input type="number" id="eur-calc" disabled>
+							<div class="formNote">EUR</div>
+						</div>
+						<div class="inlineHalf">
+							<input type="number" id="rsd-calc" disabled>
+							<div class="formNote">RSD</div>
+						</div>
+					</div>
+					<div class="inputWrap">
+						<div class="formTitle">Komentar</div>
+						<textarea name="komentar"></textarea>
+					</div>
+					<div class="errorMessage" id="new-error"></div>
+					<div class="inputWrap">
+						<div class="button" onclick="shouldSubmitNewUser()">Sačuvaj</div>
+					</div>
+				</form>
+			</div>
+			<script>
+
+
+				function eurInput(){
+					var iznos	=	Number(document.getElementById("eur-input").value);
+					document.getElementById("rsd-input").value	=	eurToRsd(iznos);
+					procenatInput()
+				}
+
+				function rsdInput(){
+					var iznos	=	Number(document.getElementById("rsd-input").value);
+					document.getElementById("eur-input").value	=	rsdToEur(iznos);
+					procenatInput()
+				}
+
+				function procenatInput(){
+					var procenat	=	Number(document.getElementById("procenat").value);
+					var iznos		=	Number(document.getElementById("eur-input").value);
+					if(procenat>0 && iznos>0){
+						document.getElementById("eur-calc").value	=	eval(iznos*procenat/100).toFixed(2);
+						document.getElementById("rsd-calc").value	=	eurToRsd(iznos*procenat/100);
+					}
+				}
+
+				function shouldSubmitNewUser(){
+					var inputs	=	document.getElementById("novi-dug").getElementsByTagName("INPUT");
+					var submit 	=	true;
+					for(var i=0;i<inputs.length;i++){
+						if(Number(inputs[i].dataset.required)==1 && !inputs[i].value){
+							submit	=	false;
+						}
+					}
+
+					if(submit){
+						document.getElementById("new-error").innerHTML	=	"";
+						document.getElementById("text-date").value	=	document.getElementById("new-date").value;
+						document.getElementById("load-box").style.display="block";
+						document.getElementById("novi-dug").submit();
+					}else{
+						document.getElementById("new-error").innerHTML	=	"Nisu popunjena sva bitna polja";
+					}
+				}
+			</script>
 		</div>
 		<!--_________________________________________________________________SVI DUGOVI______________________________________________________________-->
 		<div class="tab">
@@ -460,105 +560,6 @@
 						elem.dataset.opened=1;
 					}
 					
-				}
-			</script>
-		</div>
-		<!--_________________________________________________________________NOV DUG______________________________________________________________-->
-		<div class="tab">
-			<div class="tabTitle">Nov dug</div>
-			<div class="dugForm">
-				<form method="POST" action="/novi-dug" id="novi-dug">
-					<div class="inputWrap">
-						<div class="formTitle">Ime</div>
-						<input type="text" name="ime" data-required="1">
-					</div>
-					<div class="inputWrap">
-						<div class="formTitle">Telefon</div>
-						<input type="number" name="telefon">
-					</div>
-					<div class="inputWrap">
-						<div class="formTitle">Datum</div>
-						<input type="date" placeholder="Ime" id="new-date">
-						<input type="text" name="datum" id="text-date" style="display:none">
-						<script>
-							document.getElementById("new-date").value=year+"-"+month+"-"+day;
-						</script>
-					</div>
-					<div class="inputWrap">
-						<div class="formTitle">Iznos</div>
-						<div class="inlineHalf">
-							<input type="number" name="eur" id="eur-input" oninput="eurInput()" data-required="1">
-							<div class="formNote">EUR</div>
-						</div>
-						<div class="inlineHalf">
-							<input type="number" name="rsd" id="rsd-input" oninput="rsdInput()">
-							<div class="formNote">RSD</div>
-						</div>
-					</div>
-					<div class="inputWrap">
-						<div class="formTitle">Procenat</div>
-						<input type="number" name="procenat" id="procenat" oninput="procenatInput()" data-required="1">
-					</div>
-					<div class="inputWrap">
-						<div class="formTitle">Kamata</div>
-						<div class="inlineHalf">
-							<input type="number" id="eur-calc" disabled>
-							<div class="formNote">EUR</div>
-						</div>
-						<div class="inlineHalf">
-							<input type="number" id="rsd-calc" disabled>
-							<div class="formNote">RSD</div>
-						</div>
-					</div>
-					<div class="inputWrap">
-						<div class="formTitle">Komentar</div>
-						<textarea name="komentar"></textarea>
-					</div>
-					<div class="errorMessage" id="new-error"></div>
-					<div class="inputWrap">
-						<div class="button" onclick="shouldSubmitNewUser()">Sačuvaj</div>
-					</div>
-				</form>
-			</div>
-			<script>
-				function eurInput(){
-					var iznos	=	Number(document.getElementById("eur-input").value);
-					document.getElementById("rsd-input").value	=	eurToRsd(iznos);
-					procenatInput()
-				}
-
-				function rsdInput(){
-					var iznos	=	Number(document.getElementById("rsd-input").value);
-					document.getElementById("eur-input").value	=	rsdToEur(iznos);
-					procenatInput()
-				}
-
-				function procenatInput(){
-					var procenat	=	Number(document.getElementById("procenat").value);
-					var iznos		=	Number(document.getElementById("eur-input").value);
-					if(procenat>0 && iznos>0){
-						document.getElementById("eur-calc").value	=	eval(iznos*procenat/100).toFixed(2);
-						document.getElementById("rsd-calc").value	=	eurToRsd(iznos*procenat/100);
-					}
-				}
-
-				function shouldSubmitNewUser(){
-					var inputs	=	document.getElementById("novi-dug").getElementsByTagName("INPUT");
-					var submit 	=	true;
-					for(var i=0;i<inputs.length;i++){
-						if(Number(inputs[i].dataset.required)==1 && !inputs[i].value){
-							submit	=	false;
-						}
-					}
-
-					if(submit){
-						document.getElementById("new-error").innerHTML	=	"";
-						document.getElementById("text-date").value	=	document.getElementById("new-date").value;
-						document.getElementById("load-box").style.display="block";
-						document.getElementById("novi-dug").submit();
-					}else{
-						document.getElementById("new-error").innerHTML	=	"Nisu popunjena sva bitna polja";
-					}
 				}
 			</script>
 		</div>
