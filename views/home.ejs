@@ -47,70 +47,73 @@
 				var totalPayedToday =	0;
 				for(var i=0;i<dugovi.length;i++){
 					var dug	=	JSON.parse(JSON.stringify(dugovi[i]));
-					if(Number(dug.dan) == Number(day)){
-						var naplaceno	=	false;
-						if(dug.naplate){
-							for(var j=0;j<dug.naplate.length;j++){
-								if(Number(dug.naplate[j].godina)==Number(year) && Number(dug.naplate[j].mesec)==Number(month)){
-									if(dug.naplate[j].delay){
-										naplaceno	=	true;
-									}else{
-										//iako je delay false ne treba da se pojavljuje dug 
-										naplaceno	=	true;
-										totalPayedToday	+=	Number(dug.iznos)*Number(dug.procenat)/100;
+					if(dug.status="Aktivan"){
+						if(Number(dug.dan) == Number(day)){
+							var naplaceno	=	false;
+							if(dug.naplate){
+								for(var j=0;j<dug.naplate.length;j++){
+									if(Number(dug.naplate[j].godina)==Number(year) && Number(dug.naplate[j].mesec)==Number(month)){
+										if(dug.naplate[j].delay){
+											naplaceno	=	true;
+										}else{
+											//iako je delay false ne treba da se pojavljuje dug 
+											naplaceno	=	true;
+											totalPayedToday	+=	Number(dug.iznos)*Number(dug.procenat)/100;
+										}
+										
 									}
-									
 								}
 							}
+							if(!naplaceno){
+								var wrap 	=	document.createElement("DIV");
+								wrap.setAttribute("class","wrap");
+
+									var ime 	=	document.createElement("DIV");
+									ime.setAttribute("class","inlineItem ime");
+									ime.innerHTML	=	dug.ime;
+									wrap.appendChild(ime);
+
+									var rata 	=	document.createElement("DIV");
+									rata.setAttribute("class","inlineItem rata");
+									totalToPayToday	+=	Number(dug.iznos)*Number(dug.procenat)/100;
+									rata.innerHTML	=	Number(dug.iznos)*Number(dug.procenat)/100+" EUR";
+									wrap.appendChild(rata);
+
+									var div 	=	document.createElement("DIV");
+									wrap.appendChild(div);
+
+									var pozovi 	=	document.createElement("DIV");
+									pozovi.setAttribute("class","inlineItem button");
+									pozovi.innerHTML	=	"<a href=\"tel:"+dug.telefon+"\">Pozovi</a>";
+									wrap.appendChild(pozovi);
+
+									var naplaceno 	=	document.createElement("DIV");
+									naplaceno.setAttribute("class","inlineItem button");
+									naplaceno.setAttribute("onclick","naplata(\""+dug.id+"\")");
+									naplaceno.innerHTML	=	"Naplaceno";
+									wrap.appendChild(naplaceno);
+
+									var div 	=	document.createElement("DIV");
+									div.setAttribute("style","margin:4px auto")
+									wrap.appendChild(div);
+
+									var odlozi 	=	document.createElement("DIV");
+									odlozi.setAttribute("class","inlineItem button");
+									odlozi.setAttribute("onclick","odlaganje(\""+dug.id+"\")");
+									odlozi.innerHTML	=	"Odloži";
+									wrap.appendChild(odlozi);
+
+									var komentar 	=	document.createElement("TEXTAREA");
+									komentar.setAttribute("id","odlaganje-komentar-input");
+									komentar.setAttribute("placeholder","Komentar odlaganja");
+									wrap.appendChild(komentar);
+
+								document.getElementById("danas").appendChild(wrap);
+							}
+
 						}
-						if(!naplaceno){
-							var wrap 	=	document.createElement("DIV");
-							wrap.setAttribute("class","wrap");
-
-								var ime 	=	document.createElement("DIV");
-								ime.setAttribute("class","inlineItem ime");
-								ime.innerHTML	=	dug.ime;
-								wrap.appendChild(ime);
-
-								var rata 	=	document.createElement("DIV");
-								rata.setAttribute("class","inlineItem rata");
-								totalToPayToday	+=	Number(dug.iznos)*Number(dug.procenat)/100;
-								rata.innerHTML	=	Number(dug.iznos)*Number(dug.procenat)/100+" EUR";
-								wrap.appendChild(rata);
-
-								var div 	=	document.createElement("DIV");
-								wrap.appendChild(div);
-
-								var pozovi 	=	document.createElement("DIV");
-								pozovi.setAttribute("class","inlineItem button");
-								pozovi.innerHTML	=	"<a href=\"tel:"+dug.telefon+"\">Pozovi</a>";
-								wrap.appendChild(pozovi);
-
-								var naplaceno 	=	document.createElement("DIV");
-								naplaceno.setAttribute("class","inlineItem button");
-								naplaceno.setAttribute("onclick","naplata(\""+dug.id+"\")");
-								naplaceno.innerHTML	=	"Naplaceno";
-								wrap.appendChild(naplaceno);
-
-								var div 	=	document.createElement("DIV");
-								div.setAttribute("style","margin:4px auto")
-								wrap.appendChild(div);
-
-								var odlozi 	=	document.createElement("DIV");
-								odlozi.setAttribute("class","inlineItem button");
-								odlozi.setAttribute("onclick","odlaganje(\""+dug.id+"\")");
-								odlozi.innerHTML	=	"Odloži";
-								wrap.appendChild(odlozi);
-
-								var komentar 	=	document.createElement("TEXTAREA");
-								komentar.setAttribute("id","odlaganje-komentar-input");
-								komentar.setAttribute("placeholder","Komentar odlaganja");
-								wrap.appendChild(komentar);
-
-							document.getElementById("danas").appendChild(wrap);
-						}
-
 					}
+					
 				}
 				document.getElementById("total-to-pay-today").innerHTML	=	totalToPayToday + " EUR";
 				document.getElementById("total-to-be-pay-today").innerHTML	=	totalPayedToday + " EUR";
@@ -132,23 +135,26 @@
 				var totalToPayTomorrow	=	0;
 				for(var i=0;i<dugovi.length;i++){
 					var dug	=	JSON.parse(JSON.stringify(dugovi[i]));
-					if(Number(dug.dan) == Number(day)+1){
-						var wrap 	=	document.createElement("DIV");
-						wrap.setAttribute("class","wrap");
+					if(dug.status="Aktivan"){
+						if(Number(dug.dan) == Number(day)+1){
+							var wrap 	=	document.createElement("DIV");
+							wrap.setAttribute("class","wrap");
 
-							var ime 	=	document.createElement("DIV");
-							ime.setAttribute("class","inlineItem ime");
-							ime.innerHTML	=	dug.ime;
-							wrap.appendChild(ime);
+								var ime 	=	document.createElement("DIV");
+								ime.setAttribute("class","inlineItem ime");
+								ime.innerHTML	=	dug.ime;
+								wrap.appendChild(ime);
 
-							var rata 	=	document.createElement("DIV");
-							rata.setAttribute("class","inlineItem rata");
-							totalToPayTomorrow +=	Number(dug.iznos)*Number(dug.procenat)/100;
-							rata.innerHTML	=	Number(dug.iznos)*Number(dug.procenat)/100+" EUR";
-							wrap.appendChild(rata);
+								var rata 	=	document.createElement("DIV");
+								rata.setAttribute("class","inlineItem rata");
+								totalToPayTomorrow +=	Number(dug.iznos)*Number(dug.procenat)/100;
+								rata.innerHTML	=	Number(dug.iznos)*Number(dug.procenat)/100+" EUR";
+								wrap.appendChild(rata);
 
-						document.getElementById("sutra").appendChild(wrap);
+							document.getElementById("sutra").appendChild(wrap);
+						}
 					}
+					
 				}
 				document.getElementById("total-to-pay-tomorrow").innerHTML	=	totalToPayTomorrow+" EUR";
 			</script>
