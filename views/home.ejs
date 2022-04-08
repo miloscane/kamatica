@@ -47,7 +47,7 @@
 				var totalPayedToday =	0;
 				for(var i=0;i<dugovi.length;i++){
 					var dug	=	JSON.parse(JSON.stringify(dugovi[i]));
-					if(dug.status="Aktivan"){
+					if(dug.status=="Aktivan"){
 						if(Number(dug.dan) == Number(day)){
 							var naplaceno	=	false;
 							if(dug.naplate){
@@ -135,7 +135,7 @@
 				var totalToPayTomorrow	=	0;
 				for(var i=0;i<dugovi.length;i++){
 					var dug	=	JSON.parse(JSON.stringify(dugovi[i]));
-					if(dug.status="Aktivan"){
+					if(dug.status=="Aktivan"){
 						if(Number(dug.dan) == Number(day)+1){
 							var wrap 	=	document.createElement("DIV");
 							wrap.setAttribute("class","wrap");
@@ -155,7 +155,7 @@
 						}
 					}
 					
-				}
+				}s
 				document.getElementById("total-to-pay-tomorrow").innerHTML	=	totalToPayTomorrow+" EUR";
 			</script>
 		</div>
