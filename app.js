@@ -82,7 +82,7 @@ server.get('/',function(req,res){
 		res.redirect('/login');
 	}
 });
-
+ 
 server.get('/login',function(req,res){
 	if(req.session.user){
 		res.redirect('/')
