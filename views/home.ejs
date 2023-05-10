@@ -88,7 +88,7 @@
 
 									var rata 	=	document.createElement("DIV");
 									rata.setAttribute("class","inlineItem rata");
-									totalToPayToday	+=	Number(dug.iznos)*Number(dug.procenat)/100;
+									totalToPayToday	=	Number(dug.iznos)*Number(dug.procenat)/100;
 									rata.innerHTML	=	totalToPayToday.toFixed(2)+" EUR";
 									wrap.appendChild(rata);
 
