@@ -12,6 +12,19 @@
 		<!--_________________________________________________________________DANAS______________________________________________________________-->
 		<div class="tab">
 			<div class="tabTitle">Danas</div>
+			<input type="text" oninput="filterDanas(this)" placeholder="Filter">
+			<script>
+				function filterDanas(elem){
+					var filterValue	=	elem.value.toLowerCase();
+					var items	=	document.getElementById("danas").getElementsByClassName("wrap");
+					for(var i=0;i<items.length;i++){
+						items[i].style.display	=	"block";
+						if(!items[i].getElementsByClassName("ime")[0].innerHTML.toLowerCase().includes(filterValue)){
+							items[i].style.display="none"
+						}
+					}
+				}
+			</script>
 			<form style="display:none" method="POST" action="/naplata" id="naplata">
 				<input type="text" name="idnaplata" id="id-naplata">
 				<input type="number" name="mesec" id="mesec-naplata">
@@ -76,7 +89,7 @@
 									var rata 	=	document.createElement("DIV");
 									rata.setAttribute("class","inlineItem rata");
 									totalToPayToday	+=	Number(dug.iznos)*Number(dug.procenat)/100;
-									rata.innerHTML	=	Number(dug.iznos)*Number(dug.procenat)/100+" EUR";
+									rata.innerHTML	=	totalToPayToday.toFixed(2)+" EUR";
 									wrap.appendChild(rata);
 
 									var div 	=	document.createElement("DIV");
@@ -115,8 +128,8 @@
 					}
 					
 				}
-				document.getElementById("total-to-pay-today").innerHTML	=	totalToPayToday + " EUR";
-				document.getElementById("total-to-be-pay-today").innerHTML	=	totalPayedToday + " EUR";
+				document.getElementById("total-to-pay-today").innerHTML	=	totalToPayToday.toFixed(2) + " EUR";
+				document.getElementById("total-to-be-pay-today").innerHTML	=	totalPayedToday.toFixed(2) + " EUR";
 
 				function naplata(id){
 					document.getElementById("id-naplata").value = id;
@@ -127,6 +140,19 @@
 		<!--_________________________________________________________________SUTRA______________________________________________________________-->
 		<div class="tab">
 			<div class="tabTitle">Sutra</div>
+			<input type="text" oninput="filterSutra(this)" placeholder="Filter">
+			<script>
+				function filterSutra(elem){
+					var filterValue	=	elem.value.toLowerCase();
+					var items	=	document.getElementById("sutra").getElementsByClassName("wrap");
+					for(var i=0;i<items.length;i++){
+						items[i].style.display	=	"block";
+						if(!items[i].getElementsByClassName("ime")[0].innerHTML.toLowerCase().includes(filterValue)){
+							items[i].style.display="none"
+						}
+					}
+				}
+			</script>
 			<div id="sutra" class="agenda"></div>
 			<div style="margin-top:10px;padding-top:10px;border-top:2px solid rgb(255,255,255)">
 				<b>Ukupno za naplatu: </b> <span id="total-to-pay-tomorrow"></span>
@@ -148,7 +174,7 @@
 								var rata 	=	document.createElement("DIV");
 								rata.setAttribute("class","inlineItem rata");
 								totalToPayTomorrow +=	Number(dug.iznos)*Number(dug.procenat)/100;
-								rata.innerHTML	=	Number(dug.iznos)*Number(dug.procenat)/100+" EUR";
+								rata.innerHTML	=	totalToPayTomorrow.toFixed(2)+" EUR";
 								wrap.appendChild(rata);
 
 							document.getElementById("sutra").appendChild(wrap);
@@ -156,12 +182,25 @@
 					}
 					
 				}
-				document.getElementById("total-to-pay-tomorrow").innerHTML	=	totalToPayTomorrow+" EUR";
+				document.getElementById("total-to-pay-tomorrow").innerHTML	=	totalToPayTomorrow.toFixed(2)+" EUR";
 			</script>
 		</div>
 		<!--_________________________________________________________________ODLOZENI______________________________________________________________-->
 		<div class="tab">
 			<div class="tabTitle">Odloženi</div>
+			<input type="text" oninput="filterOdlozeni(this)" placeholder="Filter">
+			<script>
+				function filterOdlozeni(elem){
+					var filterValue	=	elem.value.toLowerCase();
+					var items	=	document.getElementById("odlozeni").getElementsByClassName("wrap");
+					for(var i=0;i<items.length;i++){
+						items[i].style.display	=	"block";
+						if(!items[i].getElementsByClassName("ime")[0].innerHTML.toLowerCase().includes(filterValue)){
+							items[i].style.display="none"
+						}
+					}
+				}
+			</script>
 			<div id="odlozeni" class="agenda"></div>
 			<form style="display:none" id="pay-delay" method="POST" action="/naplata-odlaganja">
 				<input type="text" name="idnaplata" id="id-naplata-odlozena">
@@ -191,7 +230,8 @@
 
 								var rata 	=	document.createElement("DIV");
 								rata.setAttribute("class","inlineItem rata");
-								rata.innerHTML	=	Number(dug.iznos)*Number(dug.procenat)/100+" EUR";
+								var iznosToShow	=	Number(dug.iznos)*Number(dug.procenat)/100;
+								rata.innerHTML	=	iznosToShow.toFixed(2)+" EUR";
 								wrap.appendChild(rata);
 
 								var delay 	=	document.createElement("DIV");
@@ -319,6 +359,19 @@
 		<!--_________________________________________________________________SVI DUGOVI______________________________________________________________-->
 		<div class="tab">
 			<div class="tabTitle">Dugovi</div>
+			<input type="text" oninput="filterDugovi(this)" placeholder="Filter">
+			<script>
+				function filterDugovi(elem){
+					var filterValue	=	elem.value.toLowerCase();
+					var items	=	document.getElementById("duznici-lista").getElementsByClassName("wrap");
+					for(var i=0;i<items.length;i++){
+						items[i].style.display	=	"block";
+						if(!items[i].getElementsByClassName("ime")[0].innerHTML.toLowerCase().includes(filterValue)){
+							items[i].style.display="none"
+						}
+					}
+				}
+			</script>
 			<div id="izmena-duga-wrap" style="display:none">
 				<form method="POST" action="/izmena-duga" id="izmena-duga">
 					<div class="inputWrap">
@@ -484,7 +537,8 @@
 
 								var iznos =	document.createElement("DIV");
 								iznos.setAttribute("class","inlineItem iznos");
-								iznos.innerHTML	=	eval(Number(dug.iznos)*Number(dug.procenat)/100)+" EUR";
+								var iznosToShow	=	eval(Number(dug.iznos)*Number(dug.procenat)/100);
+								iznos.innerHTML	=	iznosToShow.toFixed(2)+" EUR";
 								basicInfo.appendChild(iznos);
 
 								var datum =	document.createElement("DIV");
@@ -514,7 +568,7 @@
 
 								var rata	=	document.createElement("DIV");
 								rata.setAttribute("class","note");
-								rata.innerHTML	=	"<b>Rata: </b> "+ eval(Number(dug.iznos)*Number(dug.procenat)/100)+" EUR";
+								rata.innerHTML	=	"<b>Rata: </b> "+ iznosToShow.toFixed(2)+" EUR";
 								extraInfo.appendChild(rata);
 
 								var naplaceno	=	document.createElement("DIV");
@@ -552,8 +606,8 @@
 					}
 					 
 				}
-				document.getElementById("total-zajam").innerHTML		=	totalDug + " EUR";
-				document.getElementById("total-kamata").innerHTML		=	totalKamata + " EUR mesecno";
+				document.getElementById("total-zajam").innerHTML		=	totalDug.toFixed(2) + " EUR";
+				document.getElementById("total-kamata").innerHTML		=	totalKamata.toFixed(2) + " EUR mesecno";
 
 				function dropdown(elem){
 					if(Number(elem.dataset.opened)==1){
