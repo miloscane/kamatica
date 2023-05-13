@@ -173,7 +173,7 @@
 
 								var rata 	=	document.createElement("DIV");
 								rata.setAttribute("class","inlineItem rata");
-								totalToPayTomorrow +=	Number(dug.iznos)*Number(dug.procenat)/100;
+								totalToPayTomorrow =	Number(dug.iznos)*Number(dug.procenat)/100;
 								rata.innerHTML	=	totalToPayTomorrow.toFixed(2)+" EUR";
 								wrap.appendChild(rata);
 
