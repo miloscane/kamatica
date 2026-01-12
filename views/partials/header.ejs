@@ -20,16 +20,21 @@
 				<% if (typeof user!="undefined") { %>
 					var user	=	<%- JSON.stringify(user) %>;
 					var kursnaLista = false;
+					var kursnaLista = {
+					  eur: {
+					    sre: 117.25
+					  }
+					}
 					try{
-						kursnaLista =	JSON.parse(user.kursnaLista);
-						kursnaLista	=	JSON.parse(JSON.stringify(kursnaLista.result));
+						//kursnaLista =	JSON.parse(user.kursnaLista);
+						//kursnaLista	=	JSON.parse(JSON.stringify(kursnaLista.result));
 						var valute	=	["eur","usd"];
-						var kursevi	=	Object.keys(kursnaLista);
+						/*var kursevi	=	Object.keys(kursnaLista);
 						for(var i=0;i<kursevi.length;i++){
 							if(valute.indexOf(kursevi[i])<0){
 								delete kursnaLista[kursevi[i]]
 							}
-						}
+						}*/
 					}catch(err){
 						console.log(err);
 					}
