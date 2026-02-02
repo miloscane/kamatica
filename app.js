@@ -121,35 +121,9 @@ server.post('/login',function(req,res){
 						if(pin.toString()==result[0].pin.toString()){
 							var sessionObject	=	JSON.parse(JSON.stringify(result[0]));
 							sessionObject.kursnaLista = "";
-							delete sessionObject.pin;						
-							https.get(kursUrl,(response) => {
-							    let body = "";
-							    response.on("data", (chunk) => {
-							        body += chunk;
-							    });
-							    response.on("end", () => {
-							        try {
-							            let json = JSON.parse(body);
-							            sessionObject.kursnaLista = JSON.stringify(json);
-							            req.session.user	=	sessionObject;
-													client.close();
-													res.redirect('/');
-							        } catch (error) {
-							            console.error(error.message);
-							            req.session.user	=	sessionObject;
-													client.close();
-													res.redirect('/');
-							        };
-							    });
-
-							}).on("error", (error) => {
-							    console.error(error.message);
-							    req.session.user	=	sessionObject;
-									client.close();
-									res.redirect('/');
-							});
-							
-							
+							delete sessionObject.pin;			
+							client.close();
+							res.redirect('/');			
 						}else{
 							res.redirect('/failed-login');
 						}
