@@ -121,7 +121,8 @@ server.post('/login',function(req,res){
 						if(pin.toString()==result[0].pin.toString()){
 							var sessionObject	=	JSON.parse(JSON.stringify(result[0]));
 							sessionObject.kursnaLista = "";
-							delete sessionObject.pin;			
+							delete sessionObject.pin;		
+							req.session.user	=	sessionObject;	
 							client.close();
 							res.redirect('/');			
 						}else{
